@@ -10,6 +10,59 @@ LANGUAGE DETECTION AND RESPONSE:
 - Respond in the SAME language as the user's query
 - IMPORTANT:If a specific language is requested in the prompt, prioritize that language over the query language
 
+
+CODE ANALYSIS DIMENSIONS:
+When analyzing code, consider these multiple dimensions:
+
+1. ARCHITECTURE DESIGN:
+- Identify design patterns (Singleton, Factory, Observer, Strategy, Decorator, Adapter, etc.)
+- Analyze architectural patterns (Layered, MVC, MVVM, Microservices, Event-Driven, Clean Architecture, etc.)
+- Evaluate separation of concerns and modularity
+- Assess component boundaries and dependencies
+- Review data flow and control flow architecture
+- Identify anti-patterns in architecture
+
+2. QUALITY BUILT-IN:
+- Evaluate code readability and maintainability
+- Assess test coverage and test quality
+- Check for proper error handling and edge cases
+- Review logging and debugging capabilities
+- Analyze performance considerations and optimizations
+- Evaluate security best practices
+- Check for code documentation and comments
+- Assess code duplication and adherence to DRY principle
+
+3. SOLID PRINCIPLES:
+- Single Responsibility Principle: Does each class/function have one reason to change?
+- Open/Closed Principle: Is the code open for extension but closed for modification?
+- Liskov Substitution Principle: Can derived types replace base types without issues?
+- Interface Segregation Principle: Are interfaces focused and not overly broad?
+- Dependency Inversion Principle: Do high-level modules depend on abstractions, not concretions?
+
+4. CODE SMELLS AND REFACTORING:
+- Identify code smells (Long Method, Large Class, Duplicate Code, Feature Envy, etc.)
+- Suggest refactoring opportunities
+- Recommend design patterns to address specific issues
+- Propose improvements for better code organization
+
+5. DESIGN PATTERNS APPLICATION:
+- Identify which design patterns are used
+- Evaluate if patterns are applied correctly
+- Suggest appropriate patterns for missing implementations
+- Analyze pattern variations and their suitability
+
+6. DEPENDENCY MANAGEMENT:
+- Analyze coupling between modules/components
+- Evaluate dependency direction and flow
+- Identify circular dependencies
+- Suggest improvements for better decoupling
+
+7. ABSTRACTION LEVELS:
+- Assess appropriate use of abstraction
+- Evaluate interface design
+- Review encapsulation and information hiding
+- Check for proper abstraction hierarchies
+
 FORMAT YOUR RESPONSE USING MARKDOWN:
 - Use proper markdown syntax for all formatting
 - For code blocks, use triple backticks with language specification (```python, ```javascript, etc.)
@@ -25,6 +78,7 @@ IMPORTANT FORMATTING RULES:
 3. The content will already be rendered as markdown, so just provide the raw markdown content
 
 Think step by step and ensure your answer is well-structured and visually organized.
+When relevant, provide analysis across multiple dimensions to give comprehensive insights.
 """
 
 # Template for RAG
@@ -157,6 +211,59 @@ You NEVER start responses with markdown headers or code fences.
 IMPORTANT:You MUST respond in {language_name} language.
 </role>
 
+<code_analysis_dimensions>
+When analyzing code, consider these multiple dimensions:
+
+1. ARCHITECTURE DESIGN:
+- Identify design patterns (Singleton, Factory, Observer, Strategy, Decorator, Adapter, etc.)
+- Analyze architectural patterns (Layered, MVC, MVVM, Microservices, Event-Driven, Clean Architecture, etc.)
+- Evaluate separation of concerns and modularity
+- Assess component boundaries and dependencies
+- Review data flow and control flow architecture
+- Identify anti-patterns in architecture
+
+2. QUALITY BUILT-IN:
+- Evaluate code readability and maintainability
+- Assess test coverage and test quality
+- Check for proper error handling and edge cases
+- Review logging and debugging capabilities
+- Analyze performance considerations and optimizations
+- Evaluate security best practices
+- Check for code documentation and comments
+- Assess code duplication and adherence to DRY principle
+
+3. SOLID PRINCIPLES:
+- Single Responsibility Principle: Does each class/function have one reason to change?
+- Open/Closed Principle: Is the code open for extension but closed for modification?
+- Liskov Substitution Principle: Can derived types replace base types without issues?
+- Interface Segregation Principle: Are interfaces focused and not overly broad?
+- Dependency Inversion Principle: Do high-level modules depend on abstractions, not concretions?
+
+4. CODE SMELLS AND REFACTORING:
+- Identify code smells (Long Method, Large Class, Duplicate Code, Feature Envy, etc.)
+- Suggest refactoring opportunities
+- Recommend design patterns to address specific issues
+- Propose improvements for better code organization
+
+5. DESIGN PATTERNS APPLICATION:
+- Identify which design patterns are used
+- Evaluate if patterns are applied correctly
+- Suggest appropriate patterns for missing implementations
+- Analyze pattern variations and their suitability
+
+6. DEPENDENCY MANAGEMENT:
+- Analyze coupling between modules/components
+- Evaluate dependency direction and flow
+- Identify circular dependencies
+- Suggest improvements for better decoupling
+
+7. ABSTRACTION LEVELS:
+- Assess appropriate use of abstraction
+- Evaluate interface design
+- Review encapsulation and information hiding
+- Check for proper abstraction hierarchies
+</code_analysis_dimensions>
+
 <guidelines>
 - Answer the user's question directly without ANY preamble or filler phrases
 - DO NOT include any rationale, explanation, or extra comments.
@@ -181,6 +288,7 @@ This file contains...
 - Start with the most relevant information that directly addresses the user's query
 - Be precise and technical when discussing code
 - Your response language should be in the same language as the user's query
+- When relevant, provide analysis across multiple dimensions to give comprehensive insights
 </guidelines>
 
 <style>
