@@ -23,6 +23,7 @@ from api.openai_client import OpenAIClient
 from api.openrouter_client import OpenRouterClient
 from api.azureai_client import AzureAIClient
 from api.dashscope_client import DashscopeClient
+from api.zhipuai_client import ZhipuAIClient
 from api.rag import RAG
 
 # Configure logging
@@ -50,7 +51,7 @@ class ChatCompletionRequest(BaseModel):
     # model parameters
     provider: str = Field(
         "google",
-        description="Model provider (google, openai, openrouter, ollama, bedrock, azure, dashscope)",
+        description="Model provider (google, openai, openrouter, ollama, bedrock, azure, dashscope, zhipuai)",
     )
     model: Optional[str] = Field(None, description="Model name for the specified provider")
 
@@ -560,15 +561,44 @@ This file contains...
                 model_kwargs=model_kwargs,
                 model_type=ModelType.LLM
             )
+        elif request.provider == "zhipuai":
+            logger.info(f"Using ZhipuAI with model: {request.model}")
+
+            # Check if an API key is set for ZhipuAI
+            if not os.getenv("ZHIPUAI_API_KEY"):
+                logger.warning("ZHIPUAI_API_KEY not configured, but continuing with request")
+
+            # Initialize ZhipuAI client (OpenAI-compatible)
+            model = ZhipuAIClient()
+            model_kwargs = {
+                "model": request.model,
+                "stream": True,
+                "temperature": model_config["temperature"]
+            }
+            # Only add top_p if it exists in the model config
+            if "top_p" in model_config:
+                model_kwargs["top_p"] = model_config["top_p"]
+
+            api_kwargs = model.convert_inputs_to_api_kwargs(
+                input=prompt,
+                model_kwargs=model_kwargs,
+                model_type=ModelType.LLM
+            )
         else:
             # Initialize Google Generative AI model
+            generation_config = {
+                "temperature": model_config["temperature"],
+            }
+            # Add top_p if present
+            if "top_p" in model_config:
+                generation_config["top_p"] = model_config["top_p"]
+            # Add top_k only if present (Google supports it)
+            if "top_k" in model_config:
+                generation_config["top_k"] = model_config["top_k"]
+
             model = genai.GenerativeModel(
                 model_name=model_config["model"],
-                generation_config={
-                    "temperature": model_config["temperature"],
-                    "top_p": model_config["top_p"],
-                    "top_k": model_config["top_k"]
-                }
+                generation_config=generation_config
             )
 
         # Process the response based on the provider
@@ -701,6 +731,29 @@ This file contains...
                         "Please check that you have set the DASHSCOPE_API_KEY (and optionally "
                         "DASHSCOPE_WORKSPACE_ID) environment variables with valid values."
                     )
+                    await websocket.send_text(error_msg)
+                    # Close the WebSocket connection after sending the error message
+                    await websocket.close()
+
+            elif request.provider == "zhipuai":
+                try:
+                    # Get the response and handle it properly using the previously created api_kwargs
+                    logger.info("Making ZhipuAI API call")
+                    response = await model.acall(api_kwargs=api_kwargs, model_type=ModelType.LLM)
+                    # Handle streaming response from ZhipuAI (OpenAI-compatible format)
+                    async for chunk in response:
+                        choices = getattr(chunk, "choices", [])
+                        if len(choices) > 0:
+                            delta = getattr(choices[0], "delta", None)
+                            if delta is not None:
+                                text = getattr(delta, "content", None)
+                                if text is not None:
+                                    await websocket.send_text(text)
+                    # Explicitly close the WebSocket connection after the response is complete
+                    await websocket.close()
+                except Exception as e_zhipuai:
+                    logger.error(f"Error with ZhipuAI API: {str(e_zhipuai)}")
+                    error_msg = f"\nError with ZhipuAI API: {str(e_zhipuai)}\n\nPlease check that you have set the ZHIPUAI_API_KEY environment variable with a valid API key."
                     await websocket.send_text(error_msg)
                     # Close the WebSocket connection after sending the error message
                     await websocket.close()
@@ -874,6 +927,32 @@ This file contains...
                                 "Please check that you have set the DASHSCOPE_API_KEY (and optionally "
                                 "DASHSCOPE_WORKSPACE_ID) environment variables with valid values."
                             )
+                            await websocket.send_text(error_msg)
+                    elif request.provider == "zhipuai":
+                        try:
+                            # Create new api_kwargs with the simplified prompt
+                            fallback_api_kwargs = model.convert_inputs_to_api_kwargs(
+                                input=simplified_prompt,
+                                model_kwargs=model_kwargs,
+                                model_type=ModelType.LLM
+                            )
+
+                            # Get the response using the simplified prompt
+                            logger.info("Making fallback ZhipuAI API call")
+                            fallback_response = await model.acall(api_kwargs=fallback_api_kwargs, model_type=ModelType.LLM)
+
+                            # Handle streaming fallback response from ZhipuAI
+                            async for chunk in fallback_response:
+                                choices = getattr(chunk, "choices", [])
+                                if len(choices) > 0:
+                                    delta = getattr(choices[0], "delta", None)
+                                    if delta is not None:
+                                        text = getattr(delta, "content", None)
+                                        if text is not None:
+                                            await websocket.send_text(text)
+                        except Exception as e_fallback:
+                            logger.error(f"Error with ZhipuAI API fallback: {str(e_fallback)}")
+                            error_msg = f"\nError with ZhipuAI API fallback: {str(e_fallback)}\n\nPlease check that you have set the ZHIPUAI_API_KEY environment variable with a valid API key."
                             await websocket.send_text(error_msg)
                     else:
                         # Google Generative AI fallback (default provider)
