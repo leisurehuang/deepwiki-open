@@ -278,6 +278,10 @@ DeepWiki 现在实现了灵活的基于提供者的模型选择系统，支持�
 GOOGLE_API_KEY=你的谷歌API密钥        # 使用 Google Gemini 模型必需
 OPENAI_API_KEY=你的OpenAI密钥        # 使用 OpenAI 模型必需
 OPENROUTER_API_KEY=你的OpenRouter密钥 # 使用 OpenRouter 模型必需
+ZHIPUAI_API_KEY=你的ZhipuAI密钥      # 使用 ZhipuAI 模型必需
+
+# 并发控制
+ZHIPUAI_MAX_CONCURRENT=2             # ZhipuAI 最大并发请求数（默认：2）
 
 # OpenAI API 基础 URL 配置
 OPENAI_BASE_URL=https://自定义API端点.com/v1  # 可选，用于自定义 OpenAI API 端点

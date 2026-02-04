@@ -6,6 +6,8 @@ leverages the OpenAI SDK with a custom base_url.
 
 import os
 import base64
+import asyncio
+import threading
 from typing import (
     Dict,
     Sequence,
@@ -56,6 +58,18 @@ from adalflow.components.model_client.utils import parse_embedding_response
 
 log = logging.getLogger(__name__)
 T = TypeVar("T")
+
+# Module-level concurrency control for ZhipuAI API
+_zhipuai_lock = threading.Lock()
+_zhipuai_active_calls = 0
+_zhipuai_max_calls = int(os.getenv("ZHIPUAI_MAX_CONCURRENT", "2"))
+
+async def _get_zhipuai_semaphore():
+    """Get or create a semaphore for async calls (cached at module level)."""
+    if not hasattr(_get_zhipuai_semaphore, "_semaphore"):
+        max_concurrent = int(os.getenv("ZHIPUAI_MAX_CONCURRENT", "2"))
+        _get_zhipuai_semaphore._semaphore = asyncio.Semaphore(max_concurrent)
+    return _get_zhipuai_semaphore._semaphore
 
 
 # completion parsing functions
@@ -140,9 +154,11 @@ class ZhipuAIClient(ModelClient):
         chat_completion_parser (Callable[[Completion], Any], optional): A function to parse the chat completion into a `str`. Defaults to `None`.
             The default parser is `get_first_message_content`.
         base_url (str): The API base URL to use when initializing the client.
-            Defaults to `"https://open.bigmodel.cn/api/paas/v4/"`.
+            Defaults to `"https://open.bigmodel.cn/api/paas/v4/".
         env_api_key_name (str): The environment variable name for the API key. Defaults to `"ZHIPUAI_API_KEY"`.
         env_base_url_name (str): The environment variable name for the base URL. Defaults to `"ZHIPUAI_BASE_URL"`.
+        max_concurrent_requests (int): Maximum number of concurrent API requests. Defaults to `2`.
+            This helps avoid hitting ZhipuAI's concurrent request limits.
 
     References:
         - ZhipuAI API Documentation: https://open.bigmodel.cn/dev/api
@@ -165,6 +181,9 @@ class ZhipuAIClient(ModelClient):
             base_url (str): The API base URL to use when initializing the client.
             env_api_key_name (str): The environment variable name for the API key. Defaults to `"ZHIPUAI_API_KEY"`.
             env_base_url_name (str): The environment variable name for the base URL. Defaults to `"ZHIPUAI_BASE_URL"`.
+            
+        Note:
+            Concurrency control is managed at module level via ZHIPUAI_MAX_CONCURRENT environment variable (default: 2).
         """
         super().__init__()
         self._api_key = api_key
@@ -354,21 +373,37 @@ class ZhipuAIClient(ModelClient):
     def call(self, api_kwargs: Dict = {}, model_type: ModelType = ModelType.UNDEFINED):
         """
         kwargs is the combined input and model_kwargs.  Support streaming call.
+        Includes concurrency control to avoid hitting ZhipuAI API rate limits.
         """
-        log.info(f"api_kwargs: {api_kwargs}")
-        self._api_kwargs = api_kwargs
-        if model_type == ModelType.EMBEDDER:
-            return self.sync_client.embeddings.create(**api_kwargs)
-        elif model_type == ModelType.LLM:
-            if "stream" in api_kwargs and api_kwargs.get("stream", False):
-                log.debug("streaming call")
-                self.chat_completion_parser = handle_streaming_response
-                return self.sync_client.chat.completions.create(**api_kwargs)
+        global _zhipuai_lock, _zhipuai_active_calls, _zhipuai_max_calls
+        
+        # Acquire lock for sync call limiting (module-level)
+        with _zhipuai_lock:
+            while _zhipuai_active_calls >= _zhipuai_max_calls:
+                log.debug(f"Max sync calls ({_zhipuai_max_calls}) reached, waiting...")
+                import time
+                time.sleep(0.1)
+            _zhipuai_active_calls += 1
+        
+        try:
+            log.info(f"api_kwargs: {api_kwargs}")
+            self._api_kwargs = api_kwargs
+            if model_type == ModelType.EMBEDDER:
+                return self.sync_client.embeddings.create(**api_kwargs)
+            elif model_type == ModelType.LLM:
+                if "stream" in api_kwargs and api_kwargs.get("stream", False):
+                    log.debug("streaming call")
+                    self.chat_completion_parser = handle_streaming_response
+                    return self.sync_client.chat.completions.create(**api_kwargs)
+                else:
+                    log.debug("non-streaming call")
+                    return self.sync_client.chat.completions.create(**api_kwargs)
             else:
-                log.debug("non-streaming call")
-                return self.sync_client.chat.completions.create(**api_kwargs)
-        else:
-            raise ValueError(f"model_type {model_type} is not supported")
+                raise ValueError(f"model_type {model_type} is not supported")
+        finally:
+            # Release lock (module-level)
+            with _zhipuai_lock:
+                _zhipuai_active_calls -= 1
 
     @backoff.on_exception(
         backoff.expo,
@@ -386,17 +421,28 @@ class ZhipuAIClient(ModelClient):
     ):
         """
         kwargs is the combined input and model_kwargs
+        Includes concurrency control to avoid hitting ZhipuAI API rate limits.
         """
-        # store the api kwargs in the client
-        self._api_kwargs = api_kwargs
-        if self.async_client is None:
-            self.async_client = self.init_async_client()
-        if model_type == ModelType.EMBEDDER:
-            return await self.async_client.embeddings.create(**api_kwargs)
-        elif model_type == ModelType.LLM:
-            return await self.async_client.chat.completions.create(**api_kwargs)
-        else:
-            raise ValueError(f"model_type {model_type} is not supported")
+        # Get module-level semaphore for async call limiting
+        semaphore = await _get_zhipuai_semaphore()
+        
+        # Acquire semaphore for async call limiting
+        await semaphore.acquire()
+        
+        try:
+            # store the api kwargs in the client
+            self._api_kwargs = api_kwargs
+            if self.async_client is None:
+                self.async_client = self.init_async_client()
+            if model_type == ModelType.EMBEDDER:
+                return await self.async_client.embeddings.create(**api_kwargs)
+            elif model_type == ModelType.LLM:
+                return await self.async_client.chat.completions.create(**api_kwargs)
+            else:
+                raise ValueError(f"model_type {model_type} is not supported")
+        finally:
+            # Release semaphore
+            semaphore.release()
 
     @classmethod
     def from_dict(cls: type[T], data: Dict[str, Any]) -> T:

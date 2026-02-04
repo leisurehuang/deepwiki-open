@@ -617,6 +617,28 @@ DeepWiki now supports [ZhipuAI](https://open.bigmodel.cn/) as a model provider, 
 - **glm-4-plus**: Enhanced capabilities for complex reasoning
 - **glm-4-air**: Lightweight model for quick responses
 
+### Concurrency Control
+
+ZhipuAI API has rate limits on concurrent requests. To avoid hitting these limits, DeepWiki's ZhipuAI client includes built-in concurrency control:
+
+- **Default Concurrency**: Maximum 2 concurrent requests
+- **Automatic Rate Limiting**: Requests are queued when the limit is reached
+- **Environment Variable Configuration**: Set `ZHIPUAI_MAX_CONCURRENT` to adjust the limit
+
+To configure custom concurrency limits, use the `ZHIPUAI_MAX_CONCURRENT` environment variable:
+
+```bash
+# In your .env file
+ZHIPUAI_MAX_CONCURRENT=2  # Default value
+ZHIPUAI_MAX_CONCURRENT=5  # Higher value for premium API plans
+```
+
+**Tips to avoid rate limit errors:**
+- Start with the default (2 concurrent requests)
+- Monitor your API usage in the ZhipuAI console
+- Consider upgrading your API plan for higher limits
+- Use streaming responses for better user experience during rate-limited periods
+
 ZhipuAI is particularly useful if you want to:
 - Work with Chinese language repositories and documentation
 - Leverage models optimized for Asian languages
