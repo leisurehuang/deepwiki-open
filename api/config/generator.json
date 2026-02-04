@@ -1,5 +1,5 @@
 {
-  "default_provider": "ollama",
+  "default_provider": "zhipuai",
   "providers": {
     "dashscope": {
       "default_model": "qwen-plus",
@@ -182,9 +182,12 @@
     },
     "zhipuai": {
       "client_class": "ZhipuAIClient",
-      "default_model": "glm-4-flash",
+      "default_model": "glm-4.7",
       "supportsCustomModel": true,
       "models": {
+        "glm-4.7": {
+          "temperature": 0.7
+        },
         "glm-4-flash": {
           "temperature": 0.7
         },
