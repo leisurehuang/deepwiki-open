@@ -25,7 +25,7 @@
 - **简易导航**：简单、直观的界面探索Wiki
 - **提问功能**：使用RAG驱动的AI与您的仓库聊天，获取准确答案
 - **深度研究**：多轮研究过程，彻底调查复杂主题
-- **多模型提供商**：支持Google Gemini、OpenAI、OpenRouter和本地Ollama模型
+- **多模型提供商**：支持Google Gemini、OpenAI、OpenRouter、ZhipuAI、Azure OpenAI和本地Ollama模型
 
 ## 🚀 快速开始（超级简单！）
 
@@ -68,6 +68,8 @@ GOOGLE_API_KEY=your_google_api_key
 OPENAI_API_KEY=your_openai_api_key
 # 可选：如果您想使用OpenRouter模型，添加此项
 OPENROUTER_API_KEY=your_openrouter_api_key
+# 可选：如果您想使用ZhipuAI模型，添加此项
+ZHIPUAI_API_KEY=your_zhipuai_api_key
 ```
 
 #### 步骤2：启动后端
@@ -107,7 +109,7 @@ DeepWiki使用AI来：
 
 1. 克隆并分析GitHub、GitLab或Bitbucket仓库（包括使用令牌认证的私有仓库）
 2. 创建代码嵌入用于智能检索
-3. 使用上下文感知AI生成文档（使用Google Gemini、OpenAI、OpenRouter或本地Ollama模型）
+3. 使用上下文感知AI生成文档（使用Google Gemini、OpenAI、OpenRouter、ZhipuAI、Azure OpenAI或本地Ollama模型）
 4. 创建可视化图表解释代码关系
 5. 将所有内容组织成结构化Wiki
 6. 通过提问功能实现与仓库的智能问答
@@ -126,12 +128,16 @@ graph TD
     M -->|Google Gemini| E1[使用Gemini生成]
     M -->|OpenAI| E2[使用OpenAI生成]
     M -->|OpenRouter| E3[使用OpenRouter生成]
-    M -->|本地Ollama| E4[使用Ollama生成]
+    M -->|ZhipuAI| E4[使用ZhipuAI生成]
+    M -->|本地Ollama| E5[使用Ollama生成]
+    M -->|Azure| E6[使用Azure生成]
 
     E1 --> E[生成文档]
     E2 --> E
     E3 --> E
     E4 --> E
+    E5 --> E
+    E6 --> E
 
     D --> F[创建可视化图表]
     E --> G[组织为Wiki]
@@ -259,6 +265,8 @@ DeepWiki 现在实现了灵活的基于提供者的模型选择系统，支持�
 - **Google**: 默认使用 `gemini-2.5-flash`，还支持 `gemini-2.5-flash-lite`、`gemini-2.5-pro` 等
 - **OpenAI**: 默认使用 `gpt-5-nano`，还支持 `gpt-5`, `4o` 等
 - **OpenRouter**: 通过统一 API 访问多种模型，包括 Claude、Llama、Mistral 等
+- **ZhipuAI**: 默认使用 `glm-4-flash`，还支持 `glm-4-plus`、`glm-4-air` 等
+- **Azure OpenAI**: 默认使用 `gpt-4o`，还支持 `o4-mini` 等
 - **Ollama**: 支持本地运行的开源模型，如 `llama3`
 
 ### 环境变量

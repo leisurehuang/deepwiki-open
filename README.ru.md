@@ -25,7 +25,7 @@
 - **Простая навигация**: Интуитивный интерфейс для изучения вики
 - **Функция “Спросить”**: Общение с репозиторием через ИИ, основанный на RAG, для получения точных ответов
 - **DeepResearch**: Многошаговое исследование для глубокого анализа сложных тем
-- **Поддержка различных провайдеров моделей**: Google Gemini, OpenAI, OpenRouter и локальные модели Ollama
+- **Поддержка различных провайдеров моделей**: Google Gemini, OpenAI, OpenRouter, ZhipuAI, Azure OpenAI и локальные модели Ollama
 
 ## 🚀 Быстрый старт (максимально просто!)
 
@@ -41,6 +41,8 @@ echo "GOOGLE_API_KEY=ваш_google_api_key" > .env
 echo "OPENAI_API_KEY=ваш_openai_api_key" >> .env
 # Необязательно: ключ OpenRouter
 echo "OPENROUTER_API_KEY=ваш_openrouter_api_key" >> .env
+# Необязательно: ключ ZhipuAI
+echo "ZHIPUAI_API_KEY=ваш_zhipuai_api_key" >> .env
 # Необязательно: указать хост Ollama, если он не локальный (по умолчанию http://localhost:11434)
 echo "OLLAMA_HOST=ваш_ollama_host" >> .env
 # Необязательно: ключ и параметры Azure OpenAI

@@ -41,6 +41,9 @@ echo "GOOGLE_API_KEY=your_google_api_key" > .env
 echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 # 선택 사항: OpenRouter 모델 사용 시 API 키 추가
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# 可选：如果您想使用 ZhipuAI 模型，添加 ZhipuAI API 密钥
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
+
 
 # Docker Compose로 실행
 docker-compose up
@@ -238,6 +241,9 @@ docker-compose up
 echo "GOOGLE_API_KEY=your_google_api_key" > .env
 echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# 可选：如果您想使用 ZhipuAI 模型，添加 ZhipuAI API 密钥
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
+
 
 # .env 파일을 마운트하여 컨테이너 실행
 docker run -p 8001:8001 -p 3000:3000 \

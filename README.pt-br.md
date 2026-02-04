@@ -25,7 +25,7 @@
 - **Navegação Fácil**: Interface simples e intuitiva para explorar a wiki
 - **Recurso de Perguntas**: Converse com seu repositório usando IA com RAG para obter respostas precisas
 - **DeepResearch**: Processo de pesquisa em várias etapas que investiga minuciosamente tópicos complexos
-- **Múltiplos Provedores de Modelos**: Suporte para Google Gemini, OpenAI, OpenRouter e modelos locais Ollama
+- **Múltiplos Provedores de Modelos**: Suporte para Google Gemini, OpenAI, OpenRouter, ZhipuAI, Azure OpenAI e modelos locais Ollama
 
 ## 🚀 Início Rápido (Super Fácil!)
 
@@ -41,6 +41,8 @@ echo "GOOGLE_API_KEY=sua_chave_api_google" > .env
 echo "OPENAI_API_KEY=sua_chave_api_openai" >> .env
 # Opcional: Adicione a chave API OpenRouter se quiser usar modelos OpenRouter
 echo "OPENROUTER_API_KEY=sua_chave_api_openrouter" >> .env
+# Opcional: Adicione a chave API ZhipuAI se quiser usar modelos ZhipuAI
+echo "ZHIPUAI_API_KEY=sua_chave_api_zhipuai" >> .env
 # Opcional: Adicione o host Ollama se não for local. padrão: http://localhost:11434
 echo "OLLAMA_HOST=seu_host_ollama" >> .env
 

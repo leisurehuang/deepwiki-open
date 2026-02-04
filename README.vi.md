@@ -41,6 +41,9 @@ echo "GOOGLE_API_KEY=your_google_api_key" > .env
 echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 # Optional: Thêm OpenRouter API key nếu bạn muốn OpenRouter models
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# 可选：如果您想使用 ZhipuAI 模型，添加 ZhipuAI API 密钥
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
+
 
 # Run với Docker Compose
 docker-compose up
@@ -209,6 +212,9 @@ Bạn có thể "mount"  .env file vào container:
 echo "GOOGLE_API_KEY=your_google_api_key" > .env
 echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# 可选：如果您想使用 ZhipuAI 模型，添加 ZhipuAI API 密钥
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
+
 
 # Run container với .env file
 docker run -p 8001:8001 -p 3000:3000 \

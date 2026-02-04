@@ -25,7 +25,7 @@
 - **簡易導覽**：簡單、直觀的介面探索 Wiki
 - **提問功能**：使用 RAG 驅動的 AI 與您的儲存庫聊天，取得準確答案
 - **深度研究**：多輪研究過程，徹底調查複雜主題
-- **多模型提供商**：支援 Google Gemini、OpenAI、OpenRouter 和本機 Ollama 模型
+- **多模型提供商**：支援 Google Gemini、OpenAI、OpenRouter、ZhipuAI、Azure OpenAI 和本機 Ollama 模型
 
 ## 🚀 快速開始（超級簡單！）
 
@@ -41,6 +41,8 @@ echo "GOOGLE_API_KEY=your_google_api_key" > .env
 echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 # 可選：如果您想使用 OpenRouter 模型，新增 OpenRouter API 金鑰
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# 可選：如果您想使用 ZhipuAI 模型，新增 ZhipuAI API 金鑰
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
 # 可選：如果 Ollama 不在本機執行，新增 Ollama 主機位址，預設為 http://localhost:11434
 echo "OLLAMA_HOST=your_ollama_host" >> .env
 

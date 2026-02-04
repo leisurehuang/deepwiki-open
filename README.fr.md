@@ -26,7 +26,7 @@
 - **Navigation facile** : Interface simple et intuitive
 - **Fonction “Ask”** : Posez des questions à votre dépôt avec une IA alimentée par RAG
 - **DeepResearch** : Processus de recherche multi-étapes pour explorer des sujets complexes
-- **Multiples fournisseurs de modèles IA** : Prise en charge de Google Gemini, OpenAI, OpenRouter, et Ollama local
+- **Multiples fournisseurs de modèles IA** : Prise en charge de Google Gemini, OpenAI, OpenRouter, ZhipuAI, Azure OpenAI et Ollama local
 
 ## 🚀 Démarrage rapide (super facile !)
 
@@ -42,6 +42,8 @@ echo "GOOGLE_API_KEY=votre_clé_google" > .env
 echo "OPENAI_API_KEY=votre_clé_openai" >> .env
 # Facultatif : clé OpenRouter
 echo "OPENROUTER_API_KEY=votre_clé_openrouter" >> .env
+# Facultatif : clé ZhipuAI
+echo "ZHIPUAI_API_KEY=votre_clé_zhipuai" >> .env
 # Facultatif : hôte personnalisé Ollama
 echo "OLLAMA_HOST=votre_hote_ollama" >> .env
 # Facultatif : Azure OpenAI
