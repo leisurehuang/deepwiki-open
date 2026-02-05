@@ -157,6 +157,134 @@ graph TD
     class H result;
 ```
 
+## 🧠 程式碼分析與 SOLID 原則評估
+
+DeepWiki 包含全面的程式碼分析功能，可自動評估 SOLID 原則：
+
+### 分析維度
+
+DeepWiki 從 **7 個關鍵維度** 分析程式碼：
+
+1. **架構設計** - 設計模式、架構模式、關注點分離
+2. **SOLID 原則** - 自動評分評估（每項 0-4 分，總分 0-20）
+3. **品質內建** - 程式碼可讀性、測試覆蓋率、錯誤處理、安全性
+4. **程式碼異味與重構** - 識別反模式並提供改進建議
+5. **設計模式應用** - 評估模式使用並建議替代方案
+6. **相依性管理** - 分析耦合度、循環相依
+7. **抽象層次** - 評估介面、封裝、抽象層次
+
+### SOLID 原則評分
+
+每個 SOLID 原則按 **0-4 分** 評估：
+
+- **4 分**：優秀實作，完全遵循原則
+- **3 分**：良好實作，有輕微問題
+- **2 分**：中等實作，存在一些違規
+- **1 分**：差實作，存在重大違規
+- **0 分**：未遵循該原則
+
+**SOLID 總分**：所有 5 個原則的總和（0-20 分）
+
+### 分析流程
+
+```mermaid
+graph TD
+    A[使用者查詢] --> B{查詢類型?}
+    B -->|程式碼分析| C{研究深度?}
+    B -->|簡單問題| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|深度研究| E[DEEP_RESEARCH 迭代]
+    C -->|快速分析| D
+    
+    E --> E1[迭代 1: 研究計畫]
+    E1 --> E2{更多迭代?}
+    E2 -->|是| E3[中間迭代]
+    E3 --> E4[迭代 2-3: 深入研究]
+    E4 --> E5{最終迭代?}
+    E5 -->|否| E3
+    E5 -->|是| E6[最終迭代]
+    E2 -->|否| E6
+    
+    D --> F[應用分析框架]
+    E6 --> F
+    
+    F --> F1[維度 1: 架構設計]
+    F --> F2[維度 2: SOLID 原則]
+    F --> F3[維度 3: 品質內建]
+    F --> F4[維度 4: 程式碼異味]
+    F --> F5[維度 5: 設計模式]
+    F --> F6[維度 6: 相依性管理]
+    F --> F7[維度 7: 抽象層次]
+    
+    F1 --> G[生成結構化報告]
+    F2 --> H[SOLID 原則分析]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[SRP 評分 + 分析]
+    H --> H2[OCP 評分 + 分析]
+    H --> H3[LSP 評分 + 分析]
+    H --> H4[ISP 評分 + 分析]
+    H --> H5[DIP 評分 + 分析]
+    
+    H1 --> I[SOLID 總分]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[最終報告]
+    G --> J
+    
+    J --> K[輸出格式]
+    K --> K1[## 維度名稱]
+    K --> K2[✅ 優勢]
+    K --> K3[⚠️ 改進建議]
+    K --> K4[**分析** 包含程式碼範例]
+    K --> K5[**評分**: X/4]
+    K --> K6[**總分**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### SOLID 分析輸出範例
+
+當分析程式碼時，DeepWiki 提供結構化回饋，如下所示：
+
+```markdown
+## SOLID 原則
+
+### 單一職責原則 (SRP)
+**評分**: 3/4
+✅ **優勢**: UserService 類別職責清晰且聚焦
+⚠️ **改進建議**: UserController 混合了日誌記錄與業務邏輯
+**分析**: UserService 類別設計良好，具有單一職責。但 UserController 違反了 SRP，因為它同時處理 HTTP 請求和日誌記錄關注點。
+
+### 開閉原則 (OCP)
+**評分**: 2/4
+✅ **優勢**: PaymentProcessor 介面允許擴展
+⚠️ **改進建議**: 新增新支付類型需要修改現有的 switch 語句
+**分析**: 雖然介面支援擴展，但實作使用的條件邏輯違反了 OCP。建議使用策略模式。
+
+[... 繼續分析 LSP、ISP、DIP ...]
+
+**SOLID 總分**: 14/20
+```
+
 ## 🛠️ 專案結構
 
 ```

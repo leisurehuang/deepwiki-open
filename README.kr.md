@@ -145,6 +145,262 @@ graph TD
     class H result;
 ```
 
+## 🧠 코드 분석 및 SOLID 원칙 평가
+
+DeepWiki는 자동 SOLID 원칙 평가 기능을 포함한 포괄적인 코드 분석 기능을 제공합니다:
+
+### 분석 차원
+
+DeepWiki는 **7가지 핵심 차원**에서 코드를 분석합니다:
+
+1. **아키텍처 설계** - 디자인 패턴, 아키텍처 패턴, 관심사 분리
+2. **SOLID 원칙** - 자동 평가 및 점수 매기기 (각 원칙당 0-4점, 총점 0-20)
+3. **품질 내장** - 코드 가독성, 테스트 커버리지, 오류 처리, 보안
+4. **코드 냄새 및 리팩토링** - 안티 패턴 식별 및 개선 제안
+5. **디자인 패턴 적용** - 패턴 사용 평가 및 대안 제안
+6. **의존성 관리** - 결합도, 순환 의존성 분석
+7. **추상화 수준** - 인터페이스, 캡슐화, 추상화 계층 평가
+
+### SOLID 원칙 점수 매기기
+
+각 SOLID 원칙은 **0-4점 척도**로 평가됩니다:
+
+- **4점**: 우수한 구현, 원칙을 완벽하게 준수
+- **3점**: 양호한 구현, 사소한 문제 있음
+- **2점**: 보통 구현, 일부 위반 있음
+- **1점**: 부족한 구현, 중대한 위반 있음
+- **0점**: 원칙을 준수하지 않음
+
+**SOLID 총점**: 모든 5개 원칙의 합계 (0-20)
+
+### 분석 흐름
+
+```mermaid
+graph TD
+    A[사용자 쿼리] --> B{쿼리 유형?}
+    B -->|코드 분석| C{연구 깊이?}
+    B -->|단순 질문| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|심층 연구| E[DEEP_RESEARCH 반복]
+    C -->|빠른 분석| D
+    
+    E --> E1[반복 1: 연구 계획]
+    E1 --> E2{추가 반복?}
+    E2 -->|예| E3[중간 반복]
+    E3 --> E4[반복 2-3: 심층 조사]
+    E4 --> E5{마지막 반복?}
+    E5 -->|아니오| E3
+    E5 -->|예| E6[마지막 반복]
+    E2 -->|아니오| E6
+    
+    D --> F[분석 프레임워크 적용]
+    E6 --> F
+    
+    F --> F1[차원 1: 아키텍처 설계]
+    F --> F2[차원 2: SOLID 원칙]
+    F --> F3[차원 3: 품질 내장]
+    F --> F4[차원 4: 코드 냄새]
+    F --> F5[차원 5: 디자인 패턴]
+    F --> F6[차원 6: 의존성]
+    F --> F7[차원 7: 추상화]
+    
+    F1 --> G[구조화된 보고서 생성]
+    F2 --> H[SOLID 원칙 분석]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[SRP 점수 + 분석]
+    H --> H2[OCP 점수 + 분석]
+    H --> H3[LSP 점수 + 분석]
+    H --> H4[ISP 점수 + 분석]
+    H --> H5[DIP 점수 + 분석]
+    
+    H1 --> I[SOLID 총점]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[최종 보고서]
+    G --> J
+    
+    J --> K[출력 형식]
+    K --> K1[## 차원 이름]
+    K --> K2[✅ 강점]
+    K --> K3[⚠️ 개선 영역]
+    K --> K4[**분석** 코드 예제 포함]
+    K --> K5[**점수**: X/4]
+    K --> K6[**총점**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### SOLID 분석 출력 예시
+
+코드를 분석할 때 DeepWiki는 다음과 같은 구조화된 피드백을 제공합니다:
+
+```markdown
+## SOLID 원칙
+
+### 단일 책임 원칙 (SRP)
+**점수**: 3/4
+✅ **강점**: UserService 클래스는 명확하고 집중된 책임을 가집니다
+⚠️ **개선 영역**: UserController는 로깅과 비즈니스 로직을 혼합합니다
+**분석**: UserService 클래스는 단일 책임으로 잘 설계되었습니다. 그러나 UserController는 HTTP 요청과 로깅 관심사를 모두 처리하므로 SRP를 위반합니다.
+
+### 개방-폐쇄 원칙 (OCP)
+**점수**: 2/4
+✅ **강점**: PaymentProcessor 인터페이스는 확장을 허용합니다
+⚠️ **개선 영역**: 새로운 결제 유형을 추가하려면 기존 switch 문을 수정해야 합니다
+**분석**: 인터페이스는 확장을 지원하지만, 구현은 OCP를 위반하는 조건부 논리를 사용합니다. 전략 패턴 사용을 고려하십시오.
+
+[... LSP, ISP, DIP 분석 계속 ...]
+
+**SOLID 총점**: 14/20
+```
+
+## 🧠 코드 분석 및 SOLID 원칙 평가
+
+DeepWiki는 자동 SOLID 원칙 평가 기능을 포함한 포괄적인 코드 분석 기능을 제공합니다:
+
+### 분석 차원
+
+DeepWiki는 **7가지 핵심 차원**에서 코드를 분석합니다:
+
+1. **아키텍처 설계** - 디자인 패턴, 아키텍처 패턴, 관심사 분리
+2. **SOLID 원칙** - 자동 평가 및 점수 매기기 (각 원칙당 0-4점, 총점 0-20)
+3. **품질 내장** - 코드 가독성, 테스트 커버리지, 오류 처리, 보안
+4. **코드 냄새 및 리팩토링** - 안티 패턴 식별 및 개선 제안
+5. **디자인 패턴 적용** - 패턴 사용 평가 및 대안 제안
+6. **의존성 관리** - 결합도, 순환 의존성 분석
+7. **추상화 수준** - 인터페이스, 캡슐화, 추상화 계층 평가
+
+### SOLID 원칙 점수 매기기
+
+각 SOLID 원칙은 **0-4점 척도**로 평가됩니다:
+
+- **4점**: 우수한 구현, 원칙을 완벽하게 준수
+- **3점**: 양호한 구현, 사소한 문제 있음
+- **2점**: 보통 구현, 일부 위반 있음
+- **1점**: 부족한 구현, 중대한 위반 있음
+- **0점**: 원칙을 준수하지 않음
+
+**SOLID 총점**: 모든 5개 원칙의 합계 (0-20)
+
+### 분석 흐름
+
+```mermaid
+graph TD
+    A[사용자 쿼리] --> B{쿼리 유형?}
+    B -->|코드 분석| C{연구 깊이?}
+    B -->|단순 질문| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|심층 연구| E[DEEP_RESEARCH 반복]
+    C -->|빠른 분석| D
+    
+    E --> E1[반복 1: 연구 계획]
+    E1 --> E2{추가 반복?}
+    E2 -->|예| E3[중간 반복]
+    E3 --> E4[반복 2-3: 심층 조사]
+    E4 --> E5{마지막 반복?}
+    E5 -->|아니오| E3
+    E5 -->|예| E6[마지막 반복]
+    E2 -->|아니오| E6
+    
+    D --> F[분석 프레임워크 적용]
+    E6 --> F
+    
+    F --> F1[차원 1: 아키텍처 설계]
+    F --> F2[차원 2: SOLID 원칙]
+    F --> F3[차원 3: 품질 내장]
+    F --> F4[차원 4: 코드 냄새]
+    F --> F5[차원 5: 디자인 패턴]
+    F --> F6[차원 6: 의존성]
+    F --> F7[차원 7: 추상화]
+    
+    F1 --> G[구조화된 보고서 생성]
+    F2 --> H[SOLID 원칙 분석]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[SRP 점수 + 분석]
+    H --> H2[OCP 점수 + 분석]
+    H --> H3[LSP 점수 + 분석]
+    H --> H4[ISP 점수 + 분석]
+    H --> H5[DIP 점수 + 분석]
+    
+    H1 --> I[SOLID 총점]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[최종 보고서]
+    G --> J
+    
+    J --> K[출력 형식]
+    K --> K1[## 차원 이름]
+    K --> K2[✅ 강점]
+    K --> K3[⚠️ 개선 영역]
+    K --> K4[**분석** 코드 예제 포함]
+    K --> K5[**점수**: X/4]
+    K --> K6[**총점**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### SOLID 분석 출력 예시
+
+코드를 분석할 때 DeepWiki는 다음과 같은 구조화된 피드백을 제공합니다:
+
+```markdown
+## SOLID 원칙
+
+### 단일 책임 원칙 (SRP)
+**점수**: 3/4
+✅ **강점**: UserService 클래스는 명확하고 집중된 책임을 가집니다
+⚠️ **개선 영역**: UserController는 로깅과 비즈니스 로직을 혼합합니다
+**분석**: UserService 클래스는 단일 책임으로 잘 설계되었습니다. 그러나 UserController는 HTTP 요청과 로깅 관심사를 모두 처리하므로 SRP를 위반합니다.
+
+### 개방-폐쇄 원칙 (OCP)
+**점수**: 2/4
+✅ **강점**: PaymentProcessor 인터페이스는 확장을 허용합니다
+⚠️ **개선 영역**: 새로운 결제 유형을 추가하려면 기존 switch 문을 수정해야 합니다
+**분석**: 인터페이스는 확장을 지원하지만, 구현은 OCP를 위반하는 조건부 논리를 사용합니다. 전략 패턴 사용을 고려하십시오.
+
+[... LSP, ISP, DIP 분석 계속 ...]
+
+**SOLID 총점**: 14/20
+```
+
 ## 🛠️ 프로젝트 구조
 
 ```

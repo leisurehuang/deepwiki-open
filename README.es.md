@@ -152,6 +152,262 @@ graph TD
     class H result;
 ```
 
+## 🧠 Análisis de Código y Evaluación de Principios SOLID
+
+DeepWiki incluye capacidades integrales de análisis de código con evaluación automática de principios SOLID:
+
+### Dimensiones de Análisis
+
+DeepWiki analiza el código en **7 dimensiones clave**:
+
+1. **Diseño de Arquitectura** - Patrones de diseño, patrones arquitectónicos, separación de preocupaciones
+2. **Principios SOLID** - Evaluación automatizada con puntuación (0-4 por principio, 0-20 total)
+3. **Calidad Integrada** - Legibilidad del código, cobertura de pruebas, manejo de errores, seguridad
+4. **Olores de Código y Refactorización** - Identificar anti-patrones y sugerir mejoras
+5. **Aplicación de Patrones de Diseño** - Evaluar el uso de patrones y sugerir alternativas
+6. **Gestión de Dependencias** - Analizar acoplamiento, dependencias circulares
+7. **Niveles de Abstracción** - Evaluar interfaces, encapsulamiento, jerarquías de abstracción
+
+### Puntuación de Principios SOLID
+
+Cada principio SOLID se evalúa en una **escala de 0-4**:
+
+- **4 puntos**: Implementación excelente, sigue el principio perfectamente
+- **3 puntos**: Buena implementación, problemas menores
+- **2 puntos**: Implementación moderada, algunas violaciones
+- **1 punto**: Implementación pobre, violaciones significativas
+- **0 puntos**: No se adhiere al principio
+
+**Puntuación Total SOLID**: Suma de todos los 5 principios (0-20)
+
+### Flujo de Análisis
+
+```mermaid
+graph TD
+    A[Consulta del Usuario] --> B{¿Tipo de Consulta?}
+    B -->|Análisis de Código| C{¿Profundidad de Investigación?}
+    B -->|Pregunta Simple| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|Investigación Profunda| E[Iteraciones DEEP_RESEARCH]
+    C -->|Análisis Rápido| D
+    
+    E --> E1[Iteración 1: Plan de Investigación]
+    E1 --> E2{¿Más Iteraciones?}
+    E2 -->|Sí| E3[Iteraciones Intermedias]
+    E3 --> E4[Iteración 2-3: Profundización]
+    E4 --> E5{¿Última Iteración?}
+    E5 -->|No| E3
+    E5 -->|Sí| E6[Última Iteración]
+    E2 -->|No| E6
+    
+    D --> F[Aplicar Marco de Análisis]
+    E6 --> F
+    
+    F --> F1[Dimensión 1: Diseño de Arquitectura]
+    F --> F2[Dimensión 2: Principios SOLID]
+    F --> F3[Dimensión 3: Calidad Integrada]
+    F --> F4[Dimensión 4: Olores de Código]
+    F --> F5[Dimensión 5: Patrones de Diseño]
+    F --> F6[Dimensión 6: Dependencias]
+    F --> F7[Dimensión 7: Abstracción]
+    
+    F1 --> G[Generar Reporte Estructurado]
+    F2 --> H[Análisis de Principios SOLID]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[Puntuación SRP + Análisis]
+    H --> H2[Puntuación OCP + Análisis]
+    H --> H3[Puntuación LSP + Análisis]
+    H --> H4[Puntuación ISP + Análisis]
+    H --> H5[Puntuación DIP + Análisis]
+    
+    H1 --> I[Puntuación Total SOLID]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[Reporte Final]
+    G --> J
+    
+    J --> K[Formato de Salida]
+    K --> K1[## Nombre de Dimensión]
+    K --> K2[✅ Fortalezas]
+    K --> K3[⚠️ Áreas de Mejora]
+    K --> K4[**Análisis** con Ejemplos de Código]
+    K --> K5[**Puntuación**: X/4]
+    K --> K6[**Puntuación Total**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### Ejemplo de Salida de Análisis SOLID
+
+Al analizar código, DeepWiki proporciona retroalimentación estructurada como esta:
+
+```markdown
+## Principios SOLID
+
+### Principio de Responsabilidad Única (SRP)
+**Puntuación**: 3/4
+✅ **Fortalezas**: La clase UserService tiene una responsabilidad clara y enfocada
+⚠️ **Áreas de Mejora**: UserController mezcla el registro con la lógica de negocio
+**Análisis**: La clase UserService está bien diseñada con una sola responsabilidad. Sin embargo, UserController viola SRP al manejar tanto solicitudes HTTP como preocupaciones de registro.
+
+### Principio Abierto/Cerrado (OCP)
+**Puntuación**: 2/4
+✅ **Fortalezas**: La interfaz PaymentProcessor permite extensiones
+⚠️ **Áreas de Mejora**: Agregar nuevos tipos de pago requiere modificar la sentencia switch existente
+**Análisis**: Aunque la interfaz soporta extensiones, la implementación usa lógica condicional que viola OCP. Considere usar el patrón Strategy.
+
+[... continúa para LSP, ISP, DIP ...]
+
+**Puntuación Total SOLID**: 14/20
+```
+
+## 🧠 Análisis de Código y Evaluación de Principios SOLID
+
+DeepWiki incluye capacidades integrales de análisis de código con evaluación automática de principios SOLID:
+
+### Dimensiones de Análisis
+
+DeepWiki analiza el código en **7 dimensiones clave**:
+
+1. **Diseño de Arquitectura** - Patrones de diseño, patrones arquitectónicos, separación de preocupaciones
+2. **Principios SOLID** - Evaluación automatizada con puntuación (0-4 por principio, 0-20 total)
+3. **Calidad Integrada** - Legibilidad del código, cobertura de pruebas, manejo de errores, seguridad
+4. **Olores de Código y Refactorización** - Identificar anti-patrones y sugerir mejoras
+5. **Aplicación de Patrones de Diseño** - Evaluar el uso de patrones y sugerir alternativas
+6. **Gestión de Dependencias** - Analizar acoplamiento, dependencias circulares
+7. **Niveles de Abstracción** - Evaluar interfaces, encapsulamiento, jerarquías de abstracción
+
+### Puntuación de Principios SOLID
+
+Cada principio SOLID se evalúa en una **escala de 0-4**:
+
+- **4 puntos**: Implementación excelente, sigue el principio perfectamente
+- **3 puntos**: Buena implementación, problemas menores
+- **2 puntos**: Implementación moderada, algunas violaciones
+- **1 punto**: Implementación pobre, violaciones significativas
+- **0 puntos**: No se adhiere al principio
+
+**Puntuación Total SOLID**: Suma de todos los 5 principios (0-20)
+
+### Flujo de Análisis
+
+```mermaid
+graph TD
+    A[Consulta del Usuario] --> B{¿Tipo de Consulta?}
+    B -->|Análisis de Código| C{¿Profundidad de Investigación?}
+    B -->|Pregunta Simple| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|Investigación Profunda| E[Iteraciones DEEP_RESEARCH]
+    C -->|Análisis Rápido| D
+    
+    E --> E1[Iteración 1: Plan de Investigación]
+    E1 --> E2{¿Más Iteraciones?}
+    E2 -->|Sí| E3[Iteraciones Intermedias]
+    E3 --> E4[Iteración 2-3: Profundización]
+    E4 --> E5{¿Última Iteración?}
+    E5 -->|No| E3
+    E5 -->|Sí| E6[Última Iteración]
+    E2 -->|No| E6
+    
+    D --> F[Aplicar Marco de Análisis]
+    E6 --> F
+    
+    F --> F1[Dimensión 1: Diseño de Arquitectura]
+    F --> F2[Dimensión 2: Principios SOLID]
+    F --> F3[Dimensión 3: Calidad Integrada]
+    F --> F4[Dimensión 4: Olores de Código]
+    F --> F5[Dimensión 5: Patrones de Diseño]
+    F --> F6[Dimensión 6: Dependencias]
+    F --> F7[Dimensión 7: Abstracción]
+    
+    F1 --> G[Generar Reporte Estructurado]
+    F2 --> H[Análisis de Principios SOLID]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[Puntuación SRP + Análisis]
+    H --> H2[Puntuación OCP + Análisis]
+    H --> H3[Puntuación LSP + Análisis]
+    H --> H4[Puntuación ISP + Análisis]
+    H --> H5[Puntuación DIP + Análisis]
+    
+    H1 --> I[Puntuación Total SOLID]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[Reporte Final]
+    G --> J
+    
+    J --> K[Formato de Salida]
+    K --> K1[## Nombre de Dimensión]
+    K --> K2[✅ Fortalezas]
+    K --> K3[⚠️ Áreas de Mejora]
+    K --> K4[**Análisis** con Ejemplos de Código]
+    K --> K5[**Puntuación**: X/4]
+    K --> K6[**Puntuación Total**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### Ejemplo de Salida de Análisis SOLID
+
+Al analizar código, DeepWiki proporciona retroalimentación estructurada como esta:
+
+```markdown
+## Principios SOLID
+
+### Principio de Responsabilidad Única (SRP)
+**Puntuación**: 3/4
+✅ **Fortalezas**: La clase UserService tiene una responsabilidad clara y enfocada
+⚠️ **Áreas de Mejora**: UserController mezcla el registro con la lógica de negocio
+**Análisis**: La clase UserService está bien diseñada con una sola responsabilidad. Sin embargo, UserController viola SRP al manejar tanto solicitudes HTTP como preocupaciones de registro.
+
+### Principio Abierto/Cerrado (OCP)
+**Puntuación**: 2/4
+✅ **Fortalezas**: La interfaz PaymentProcessor permite extensiones
+⚠️ **Áreas de Mejora**: Agregar nuevos tipos de pago requiere modificar la sentencia switch existente
+**Análisis**: Aunque la interfaz soporta extensiones, la implementación usa lógica condicional que viola OCP. Considere usar el patrón Strategy.
+
+[... continúa para LSP, ISP, DIP ...]
+
+**Puntuación Total SOLID**: 14/20
+```
+
 ## 🛠️ Estructura del Proyecto
 
 ```

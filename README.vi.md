@@ -145,6 +145,134 @@ graph TD
     class H result;
 ```
 
+## 🧠 Phân Tích Mã và Đánh Giá Nguyên Tắc SOLID
+
+DeepWiki bao gồm các khả năng phân tích mã toàn diện với đánh giá tự động các nguyên tắc SOLID:
+
+### Các Chiều Phân Tích
+
+DeepWiki phân tích mã trên **7 chiều chính**:
+
+1. **Thiết Kế Kiến Trúc** - Mẫu thiết kế, mẫu kiến trúc, sự phân tách mối quan tâm
+2. **Nguyên Tắc SOLID** - Đánh giá tự động với điểm số (0-4 mỗi nguyên tắc, 0-20 tổng)
+3. **Chất Lượng Được Xây Dựng** - Khả năng đọc mã, độ phủ kiểm thử, xử lý lỗi, bảo mật
+4. **Mùi Mã và Tái Cấu Trúc** - Xác định các anti-pattern và đề xuất cải tiến
+5. **Ứng Dụng Mẫu Thiết Kế** - Đánh giá việc sử dụng mẫu và đề xuất thay thế
+6. **Quản Lý Phụ Thuộc** - Phân tích sự kết hợp, phụ thuộc vòng tròn
+7. **Các Mức Độ Trừu Tượng** - Đánh giá giao diện, đóng gói, phân cấp trừu tượng
+
+### Điểm Số Nguyên Tắc SOLID
+
+Mỗi nguyên tắc SOLID được đánh giá trên **thang điểm 0-4**:
+
+- **4 điểm**: Thực hiện xuất sắc, tuân theo nguyên tắc hoàn hảo
+- **3 điểm**: Thực hiện tốt, một số vấn đề nhỏ
+- **2 điểm**: Thực hiện vừa phải, một số vi phạm
+- **1 điểm**: Thực hiện kém, các vi phạm đáng kể
+- **0 điểm**: Không tuân theo nguyên tắc
+
+**Tổng Điểm SOLID**: Tổng của tất cả 5 nguyên tắc (0-20)
+
+### Quy Trình Phân Tích
+
+```mermaid
+graph TD
+    A[Truy vấn Người dùng] --> B{Loại Truy vấn?}
+    B -->|Phân tích Mã| C{Độ Sâu Nghiên Cứu?}
+    B -->|Câu Hỏi Đơn Giản| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|Nghiên Cứu Sâu| E[Lặp DEEP_RESEARCH]
+    C -->|Phân Tích Nhanh| D
+    
+    E --> E1[Lặp 1: Kế Hoạch Nghiên Cứu]
+    E1 --> E2{Thêm Lặp?}
+    E2 -->|Có| E3[Lặp Trung Gian]
+    E3 --> E4[Lặp 2-3: Sâu Hơn]
+    E4 --> E5{Lặp Cuối?}
+    E5 -->|Không| E3
+    E5 -->|Có| E6[Lặp Cuối]
+    E2 -->|Không| E6
+    
+    D --> F[Áp Dụng Khung Phân Tích]
+    E6 --> F
+    
+    F --> F1[Chiều 1: Thiết Kế Kiến Trúc]
+    F --> F2[Chiều 2: Nguyên Tắc SOLID]
+    F --> F3[Chiều 3: Chất Lượng]
+    F --> F4[Chiều 4: Mùi Mã]
+    F --> F5[Chiều 5: Mẫu Thiết Kế]
+    F --> F6[Chiều 6: Phụ Thuộc]
+    F --> F7[Chiều 7: Trừu Tượng]
+    
+    F1 --> G[Tạo Báo Cáo Cấu Trúc]
+    F2 --> H[Phân Tích Nguyên Tắc SOLID]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[Điểm SRP + Phân Tích]
+    H --> H2[Điểm OCP + Phân Tích]
+    H --> H3[Điểm LSP + Phân Tích]
+    H --> H4[Điểm ISP + Phân Tích]
+    H --> H5[Điểm DIP + Phân Tích]
+    
+    H1 --> I[Tổng Điểm SOLID]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[Báo Cáo Cuối]
+    G --> J
+    
+    J --> K[Định Dạng Đầu Ra]
+    K --> K1[## Tên Chiều]
+    K --> K2[✅ Điểm Mạnh]
+    K --> K3[⚠️ Lĩnh Vực Cải Thiện]
+    K --> K4[**Phân Tích** với Ví Dụ Mã]
+    K --> K5[**Điểm**: X/4]
+    K --> K6[**Tổng Điểm**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### Ví Đầu Ra Phân Tích SOLID
+
+Khi phân tích mã, DeepWiki cung cấp phản hồi có cấu trúc như sau:
+
+```markdown
+## Nguyên Tắc SOLID
+
+### Nguyên Tắc Trách Nhiệm Đơn (SRP)
+**Điểm**: 3/4
+✅ **Điểm Mạnh**: Lớp UserService có trách nhiệm rõ ràng và tập trung
+⚠️ **Lĩnh Vực Cải Thiện**: UserController trộn lẫn ghi nhật ký với logic kinh doanh
+**Phân Tích**: Lớp UserService được thiết kế tốt với một trách nhiệm duy nhất. Tuy nhiên, UserController vi phạm SRP bằng cách xử lý cả yêu cầu HTTP và mối quan tâm ghi nhật ký.
+
+### Nguyên Tắc Mở-Đóng (OCP)
+**Điểm**: 2/4
+✅ **Điểm Mạnh**: Giao diện PaymentProcessor cho phép mở rộng
+⚠️ **Lĩnh Vực Cải Thiện**: Thêm các loại thanh toán mới yêu cầu sửa đổi câu lệnh switch hiện có
+**Phân Tích**: Mặc dù giao diện hỗ trợ mở rộng, việc thực hiện sử dụng logic điều kiện vi phạm OCP. Cân nhắc sử dụng mẫu Strategy.
+
+[... tiếp tục cho LSP, ISP, DIP ...]
+
+**Tổng Điểm SOLID**: 14/20
+```
+
 ## 🛠️ Cấu trúc dự án
 
 ```

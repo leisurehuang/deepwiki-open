@@ -176,6 +176,134 @@ graph TD
     class H result;
 ```
 
+## 🧠 Code Analysis and SOLID Principles Evaluation
+
+DeepWiki includes comprehensive code analysis capabilities with automatic SOLID principles evaluation:
+
+### Analysis Dimensions
+
+DeepWiki analyzes code across **7 key dimensions**:
+
+1. **Architecture Design** - Design patterns, architectural patterns, separation of concerns
+2. **SOLID Principles** - Automated evaluation with scoring (0-4 per principle, 0-20 total)
+3. **Quality Built-In** - Code readability, test coverage, error handling, security
+4. **Code Smells & Refactoring** - Identify anti-patterns and suggest improvements
+5. **Design Patterns Application** - Evaluate pattern usage and suggest alternatives
+6. **Dependency Management** - Analyze coupling, circular dependencies
+7. **Abstraction Levels** - Assess interfaces, encapsulation, abstraction hierarchies
+
+### SOLID Principles Scoring
+
+Each SOLID principle is evaluated on a **0-4 scale**:
+
+- **4 points**: Excellent implementation, follows the principle perfectly
+- **3 points**: Good implementation, minor issues
+- **2 points**: Moderate implementation, some violations
+- **1 point**: Poor implementation, significant violations
+- **0 points**: No adherence to the principle
+
+**Total SOLID Score**: Sum of all 5 principles (0-20)
+
+### Analysis Flow
+
+```mermaid
+graph TD
+    A[User Query] --> B{Query Type?}
+    B -->|Code Analysis| C{Research Depth?}
+    B -->|Simple Question| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|Deep Research| E[DEEP_RESEARCH Iterations]
+    C -->|Quick Analysis| D
+    
+    E --> E1[Iteration 1: Research Plan]
+    E1 --> E2{More Iterations?}
+    E2 -->|Yes| E3[Intermediate Iterations]
+    E3 --> E4[Iteration 2-3: Deep Dive]
+    E4 --> E5{Final Iteration?}
+    E5 -->|No| E3
+    E5 -->|Yes| E6[Final Iteration]
+    E2 -->|No| E6
+    
+    D --> F[Apply Analysis Framework]
+    E6 --> F
+    
+    F --> F1[Dimension 1: Architecture Design]
+    F --> F2[Dimension 2: SOLID Principles]
+    F --> F3[Dimension 3: Quality Built-In]
+    F --> F4[Dimension 4: Code Smells]
+    F --> F5[Dimension 5: Design Patterns]
+    F --> F6[Dimension 6: Dependencies]
+    F --> F7[Dimension 7: Abstraction]
+    
+    F1 --> G[Generate Structured Report]
+    F2 --> H[SOLID Principles Analysis]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[SRP Score + Analysis]
+    H --> H2[OCP Score + Analysis]
+    H --> H3[LSP Score + Analysis]
+    H --> H4[ISP Score + Analysis]
+    H --> H5[DIP Score + Analysis]
+    
+    H1 --> I[Total SOLID Score]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[Final Report]
+    G --> J
+    
+    J --> K[Output Format]
+    K --> K1[## Dimension Name]
+    K --> K2[✅ Strengths]
+    K --> K3[⚠️ Areas for Improvement]
+    K --> K4[**Analysis** with Code Examples]
+    K --> K5[**Score**: X/4]
+    K --> K6[**Total Score**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### Example SOLID Analysis Output
+
+When analyzing code, DeepWiki provides structured feedback like this:
+
+```markdown
+## SOLID Principles
+
+### Single Responsibility Principle (SRP)
+**Score**: 3/4
+✅ **Strengths**: UserService class has a clear, focused responsibility
+⚠️ **Areas for Improvement**: UserController mixes logging with business logic
+**Analysis**: The UserService class is well-designed with a single responsibility. However, the UserController violates SRP by handling both HTTP requests and logging concerns.
+
+### Open/Closed Principle (OCP)
+**Score**: 2/4
+✅ **Strengths**: PaymentProcessor interface allows extension
+⚠️ **Areas for Improvement**: Adding new payment types requires modifying existing switch statement
+**Analysis**: While the interface supports extension, the implementation uses conditional logic that violates OCP. Consider using the Strategy pattern.
+
+[... continues for LSP, ISP, DIP ...]
+
+**Total SOLID Score**: 14/20
+```
+
 ## 🛠️ Project Structure
 
 ```

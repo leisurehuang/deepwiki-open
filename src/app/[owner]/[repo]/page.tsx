@@ -415,14 +415,39 @@ export default function RepoWikiPage() {
         // Get repository URL
         const repoUrl = getRepoUrl(effectiveRepoInfo);
 
-        // Create the prompt content - simplified to avoid message dialogs
- const promptContent =
-`You are an expert technical writer and software architect.
-Your task is to generate a comprehensive and accurate technical wiki page in Markdown format about a specific feature, system, or module within a given software project.
+        // Get language name for prompts
+        const languageName = language === 'en' ? 'English' :
+            language === 'ja' ? 'Japanese (日本語)' :
+            language === 'zh' ? 'Mandarin Chinese (中文)' :
+            language === 'zh-tw' ? 'Traditional Chinese (繁體中文)' :
+            language === 'es' ? 'Spanish (Español)' :
+            language === 'kr' ? 'Korean (한국어)' :
+            language === 'vi' ? 'Vietnamese (Tiếng Việt)' :
+            language === "pt-br" ? "Brazilian Portuguese (Português Brasileiro)" :
+            language === "fr" ? "Français (French)" :
+            language === "ru" ? "Русский (Russian)" :
+            'English';
+
+        // Get repository type for prompts
+        const repoType = effectiveRepoInfo.type || 'github';
+
+        // Determine if this is comprehensive or concise mode based on the page title
+        // Concise mode pages have titles that match the 7 main sections directly
+        const isConcisePage = page.id === 'introduction' || 
+                              page.id === 'architecture-design' || 
+                              page.id === 'solid-principles' || 
+                              page.id === 'quality-analysis' || 
+                              page.id === 'dependency-management' || 
+                              page.id === 'abstraction-levels' || 
+                              page.id === 'conclusion';
+
+        // Create the prompt content - organized in exact sequential structure
+        const promptContent = isConcisePage ?
+`You are an expert technical writer and software architect specializing in code analysis and documentation.
 
 You will be given:
-1. The "[WIKI_PAGE_TOPIC]" for the page you need to create.
-2. A list of "[RELEVANT_SOURCE_FILES]" from the project that you MUST use as the sole basis for the content. You have access to the full content of these files. You MUST use AT LEAST 5 relevant source files for comprehensive coverage - if fewer are provided, search for additional related files in the codebase.
+1. The "[WIKI_PAGE_TOPIC]" for the page you need to create: "${page.title}"
+2. A list of "[RELEVANT_SOURCE_FILES]" from the project that you MUST use as the sole basis for the content
 
 CRITICAL STARTING INSTRUCTION:
 The very first thing on the page MUST be a \`<details>\` block listing ALL the \`[RELEVANT_SOURCE_FILES]\` you used to generate the content. There MUST be AT LEAST 5 source files listed - if fewer were provided, you MUST find additional related files to include.
@@ -430,7 +455,6 @@ Format it exactly like this:
 <details>
 <summary>Relevant source files</summary>
 
-Remember, do not provide any acknowledgements, disclaimers, apologies, or any other preface before the \`<details>\` block. JUST START with the \`<details>\` block.
 The following files were used as context for generating this wiki page:
 
 ${filePaths.map(path => `- [${path}](${generateFileUrl(path)})`).join('\n')}
@@ -439,90 +463,393 @@ ${filePaths.map(path => `- [${path}](${generateFileUrl(path)})`).join('\n')}
 
 Immediately after the \`<details>\` block, the main title of the page should be a H1 Markdown heading: \`# ${page.title}\`.
 
-Based ONLY on the content of the \`[RELEVANT_SOURCE_FILES]\`:
+Based ONLY on the content of the \`[RELEVANT_SOURCE_FILES]\`, generate a CONCISE wiki page for "${page.title}" following the structure below with SIMPLIFIED ANALYSIS and SCORING for each subsection:
 
-1.  **Introduction:** Start with a concise introduction (1-2 paragraphs) explaining the purpose, scope, and high-level overview of "${page.title}" within the context of the overall project. If relevant, and if information is available in the provided files, link to other potential wiki pages using the format \`[Link Text](#page-anchor-or-id)\`.
+${page.id === 'introduction' ? `
+## Introduction
+Provide a concise introduction (2-3 paragraphs) covering:
+- Project purpose and goals
+- Key features overview
+- Technology stack summary
+- Target users and use cases
 
-2.  **Detailed Sections:** Break down "${page.title}" into logical sections using H2 (\`##\`) and H3 (\`###\`) Markdown headings. For each section:
-    *   Explain the architecture, components, data flow, or logic relevant to the section's focus, as evidenced in the source files.
-    *   Identify key functions, classes, data structures, API endpoints, or configuration elements pertinent to that section.
+Include a summary score for project clarity (1-10).
+` : ''}
 
-3.  **Mermaid Diagrams:**
-    *   EXTENSIVELY use Mermaid diagrams (e.g., \`flowchart TD\`, \`sequenceDiagram\`, \`classDiagram\`, \`erDiagram\`, \`graph TD\`) to visually represent architectures, flows, relationships, and schemas found in the source files.
-    *   Ensure diagrams are accurate and directly derived from information in the \`[RELEVANT_SOURCE_FILES]\`.
-    *   Provide a brief explanation before or after each diagram to give context.
-    *   CRITICAL: All diagrams MUST follow strict vertical orientation:
-       - Use "graph TD" (top-down) directive for flow diagrams
-       - NEVER use "graph LR" (left-right)
-       - Maximum node width should be 3-4 words
-       - For sequence diagrams:
-         - Start with "sequenceDiagram" directive on its own line
-         - Define ALL participants at the beginning using "participant" keyword
-         - Optionally specify participant types: actor, boundary, control, entity, database, collections, queue
-         - Use descriptive but concise participant names, or use aliases: "participant A as Alice"
-         - Use the correct Mermaid arrow syntax (8 types available):
-           - -> solid line without arrow (rarely used)
-           - --> dotted line without arrow (rarely used)
-           - ->> solid line with arrowhead (most common for requests/calls)
-           - -->> dotted line with arrowhead (most common for responses/returns)
-           - ->x solid line with X at end (failed/error message)
-           - -->x dotted line with X at end (failed/error response)
-           - -) solid line with open arrow (async message, fire-and-forget)
-           - --) dotted line with open arrow (async response)
-           - Examples: A->>B: Request, B-->>A: Response, A->xB: Error, A-)B: Async event
-         - Use +/- suffix for activation boxes: A->>+B: Start (activates B), B-->>-A: End (deactivates B)
-         - Group related participants using "box": box GroupName ... end
-         - Use structural elements for complex flows:
-           - loop LoopText ... end (for iterations)
-           - alt ConditionText ... else ... end (for conditionals)
-           - opt OptionalText ... end (for optional flows)
-           - par ParallelText ... and ... end (for parallel actions)
-           - critical CriticalText ... option ... end (for critical regions)
-           - break BreakText ... end (for breaking flows/exceptions)
-         - Add notes for clarification: "Note over A,B: Description", "Note right of A: Detail"
-         - Use autonumber directive to add sequence numbers to messages
-         - NEVER use flowchart-style labels like A--|label|-->B. Always use a colon for labels: A->>B: My Label
+${page.id === 'architecture-design' ? `
+## Architecture Design Analysis
 
-4.  **Tables:**
-    *   Use Markdown tables to summarize information such as:
-        *   Key features or components and their descriptions.
-        *   API endpoint parameters, types, and descriptions.
-        *   Configuration options, their types, and default values.
-        *   Data model fields, types, constraints, and descriptions.
+### High-Level Architecture (Score: X/10)
+- System architecture overview
+- Main components and their relationships
+- Architectural pattern identification (MVC, Layered, Microservices, etc.)
+- Brief architecture diagram using Mermaid
 
-5.  **Code Snippets (ENTIRELY OPTIONAL):**
-    *   Include short, relevant code snippets (e.g., Python, Java, JavaScript, SQL, JSON, YAML) directly from the \`[RELEVANT_SOURCE_FILES]\` to illustrate key implementation details, data structures, or configurations.
-    *   Ensure snippets are well-formatted within Markdown code blocks with appropriate language identifiers.
+### Design Patterns (Score: X/10)
+- List top 3-5 design patterns identified
+- Brief explanation of each pattern's usage
+- Score pattern application quality
 
-6.  **Source Citations (EXTREMELY IMPORTANT):**
-    *   For EVERY piece of significant information, explanation, diagram, table entry, or code snippet, you MUST cite the specific source file(s) and relevant line numbers from which the information was derived.
-    *   Place citations at the end of the paragraph, under the diagram/table, or after the code snippet.
-    *   Use the exact format: \`Sources: [filename.ext:start_line-end_line]()\` for a range, or \`Sources: [filename.ext:line_number]()\` for a single line. Multiple files can be cited: \`Sources: [file1.ext:1-10](), [file2.ext:5](), [dir/file3.ext]()\` (if the whole file is relevant and line numbers are not applicable or too broad).
-    *   If an entire section is overwhelmingly based on one or two files, you can cite them under the section heading in addition to more specific citations within the section.
-    *   IMPORTANT: You MUST cite AT LEAST 5 different source files throughout the wiki page to ensure comprehensive coverage.
+### Component Relationships (Score: X/10)
+- Key component dependencies
+- Data flow summary
+- Integration points
 
-7.  **Technical Accuracy:** All information must be derived SOLELY from the \`[RELEVANT_SOURCE_FILES]\`. Do not infer, invent, or use external knowledge about similar systems or common practices unless it's directly supported by the provided code. If information is not present in the provided files, do not include it or explicitly state its absence if crucial to the topic.
+**Overall Architecture Score**: X/10
+` : ''}
 
-8.  **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
+${page.id === 'solid-principles' ? `
+## SOLID Principles Analysis
 
-9.  **Conclusion/Summary:** End with a brief summary paragraph if appropriate for "${page.title}", reiterating the key aspects covered and their significance within the project.
+Provide a CONCISE analysis for each principle with scoring:
 
-IMPORTANT: Generate the content in ${language === 'en' ? 'English' :
-            language === 'ja' ? 'Japanese (日本語)' :
-            language === 'zh' ? 'Mandarin Chinese (中文)' :
-            language === 'zh-tw' ? 'Traditional Chinese (繁體中文)' :
-            language === 'es' ? 'Spanish (Español)' :
-            language === 'kr' ? 'Korean (한국어)' :
-            language === 'vi' ? 'Vietnamese (Tiếng Việt)' : 
-            language === "pt-br" ? "Brazilian Portuguese (Português Brasileiro)" :
-            language === "fr" ? "Français (French)" :
-            language === "ru" ? "Русский (Russian)" :
-            'English'} language.
+### Single Responsibility Principle (SRP)
+**Score**: X/4
+- Key strength: [1 sentence]
+- Main issue: [1 sentence]
+- Example: [Brief code reference]
+
+### Open/Closed Principle (OCP)
+**Score**: X/4
+- Key strength: [1 sentence]
+- Main issue: [1 sentence]
+- Example: [Brief code reference]
+
+### Liskov Substitution Principle (LSP)
+**Score**: X/4
+- Key strength: [1 sentence]
+- Main issue: [1 sentence]
+- Example: [Brief code reference]
+
+### Interface Segregation Principle (ISP)
+**Score**: X/4
+- Key strength: [1 sentence]
+- Main issue: [1 sentence]
+- Example: [Brief code reference]
+
+### Dependency Inversion Principle (DIP)
+**Score**: X/4
+- Key strength: [1 sentence]
+- Main issue: [1 sentence]
+- Example: [Brief code reference]
+
+**Total SOLID Score**: X/20
+
+### Top 3 Improvement Areas
+1. [Most critical SOLID issue]
+2. [Second most critical issue]
+3. [Third most critical issue]
+` : ''}
+
+${page.id === 'quality-analysis' ? `
+## Quality Built-In Analysis
+
+### Code Readability (Score: X/10)
+- Code clarity assessment
+- Naming conventions evaluation
+- Documentation quality
+
+### Test Coverage (Score: X/10)
+- Test coverage percentage (estimate)
+- Test quality assessment
+- Key areas needing tests
+
+### Performance (Score: X/10)
+- Performance bottlenecks identified
+- Optimization opportunities
+- Resource usage concerns
+
+### Security (Score: X/10)
+- Security best practices adherence
+- Vulnerability concerns
+- Input validation assessment
+
+### Top 3 Code Smells
+1. [Most critical code smell]
+2. [Second most critical]
+3. [Third most critical]
+
+**Overall Quality Score**: X/10
+` : ''}
+
+${page.id === 'dependency-management' ? `
+## Dependency Management Analysis
+
+### Coupling Analysis (Score: X/10)
+- Overall coupling level
+- Tight coupling issues
+- Module dependencies summary
+
+### Dependency Flow (Score: X/10)
+- Dependency direction assessment
+- Layer adherence
+- Circular dependencies identified
+
+### Decoupling Recommendations
+- Top 3 decoupling improvements:
+  1. [Priority 1]
+  2. [Priority 2]
+  3. [Priority 3]
+
+**Overall Dependency Management Score**: X/10
+` : ''}
+
+${page.id === 'abstraction-levels' ? `
+## Abstraction Levels Assessment
+
+### Abstraction Usage (Score: X/10)
+- Appropriateness of abstraction levels
+- Concrete vs abstract balance
+- Over/under-abstraction issues
+
+### Interface Design (Score: X/10)
+- Interface quality assessment
+- Interface segregation
+- API design evaluation
+
+### Encapsulation (Score: X/10)
+- Information hiding effectiveness
+- Data protection
+- Access control quality
+
+**Overall Abstraction Score**: X/10
+` : ''}
+
+${page.id === 'conclusion' ? `
+## Conclusion and Recommendations
+
+### Overall Code Quality Score
+- Calculate aggregate score from all 6 sections
+- Compare to industry benchmarks
+- Overall grade (A/B/C/D/F)
+
+### Key Findings Summary
+- Top 3 strengths from the analysis
+- Top 3 weaknesses from the analysis
+- Most critical issues to address
+
+### Prioritized Improvement Recommendations
+1. **[Priority 1 - Critical]**: [Issue description and impact]
+2. **[Priority 2 - High]**: [Issue description and impact]
+3. **[Priority 3 - Medium]**: [Issue description and impact]
+4. **[Priority 4 - Low]**: [Issue description and impact]
+5. **[Priority 5 - Nice to have]**: [Issue description and impact]
+
+### Quick Wins
+List 2-3 quick improvements that can be implemented immediately.
+
+### Long-term Recommendations
+List 2-3 strategic improvements for long-term code health.
+` : ''}
+
+IMPORTANT FORMATTING REQUIREMENTS:
+- Use clear section headings with ## for main sections and ### for subsections
+- Include scores in format: **Score**: X/10 or X/4
+- Use bullet points for lists
+- Keep descriptions concise (1-2 sentences per point)
+- Include at least 3 source file citations throughout the page
+- Use the format: \`Sources: [filename.ext:start_line-end_line]()\`
+
+IMPORTANT: Generate the content in ${languageName} language.
 
 Remember:
-- Ground every claim in the provided source files.
-- Prioritize accuracy and direct representation of the code's functionality and structure.
-- Structure the document logically for easy understanding by other developers.
+- Focus on MOST critical insights
+- Provide actionable scores and metrics
+- Keep analysis concise but meaningful
+- Support all claims with source citations
+- Prioritize clarity and actionability
+` :
+`You are an expert technical writer and software architect specializing in comprehensive code analysis and documentation.
+
+You will be given:
+1. The "[WIKI_PAGE_TOPIC]" for the page you need to create: "${page.title}"
+2. A list of "[RELEVANT_SOURCE_FILES]" from the project that you MUST use as the sole basis for the content
+
+CRITICAL STARTING INSTRUCTION:
+The very first thing on the page MUST be a \`<details>\` block listing ALL the \`[RELEVANT_SOURCE_FILES]\` you used to generate the content. There MUST be AT LEAST 5 source files listed - if fewer were provided, you MUST find additional related files to include.
+Format it exactly like this:
+<details>
+<summary>Relevant source files</summary>
+
+The following files were used as context for generating this wiki page:
+
+${filePaths.map(path => `- [${path}](${generateFileUrl(path)})`).join('\n')}
+<!-- Add additional relevant files if fewer than 5 were provided -->
+</details>
+
+Immediately after the \`<details>\` block, the main title of the page should be a H1 Markdown heading: \`# ${page.title}\`.
+
+Based ONLY on the content of the \`[RELEVANT_SOURCE_FILES]\`, generate a comprehensive wiki page organized in the following exact sequential structure:
+
+## 1. Introduction
+Start with a concise introduction (1-2 paragraphs) explaining the purpose, scope, and high-level overview of "${page.title}" within the context of the overall project.
+
+## 2. Architecture Design
+Analyze the code structure and provide detailed architecture analysis:
+
+### Design Patterns
+- Identify design patterns used (Singleton, Factory, Observer, Strategy, Decorator, Adapter, etc.)
+- Analyze architectural patterns (Layered, MVC, MVVM, Microservices, Event-Driven, Clean Architecture, etc.)
+- Evaluate separation of concerns and modularity
+- Assess component boundaries and dependencies
+- Review data flow and control flow architecture
+- Identify anti-patterns in architecture
+
+### Architectural Diagrams
+- Use Mermaid diagrams (flowchart TD, sequenceDiagram, classDiagram, erDiagram, graph TD) to visualize architectures
+- All diagrams MUST follow strict vertical orientation (use "graph TD", NEVER "graph LR")
+- Maximum node width should be 3-4 words
+- For sequence diagrams, define ALL participants at the beginning using "participant" keyword
+- Use correct Mermaid arrow syntax (A->>B: Request, B-->>A: Response, etc.)
+
+## 3. SOLID Principles Analysis
+You MUST provide a structured analysis for EACH of the five principles. For EACH principle, include:
+
+### Single Responsibility Principle (SRP)
+**Score**: X/4 (must be an integer)
+✅ **Strengths**: [What the code does well regarding SRP]
+⚠️ **Areas for Improvement**: [What needs improvement regarding SRP]
+**Analysis**: [Detailed explanation with code examples]
+
+### Open/Closed Principle (OCP)
+**Score**: X/4 (must be an integer)
+✅ **Strengths**: [What the code does well regarding OCP]
+⚠️ **Areas for Improvement**: [What needs improvement regarding OCP]
+**Analysis**: [Detailed explanation with code examples]
+
+### Liskov Substitution Principle (LSP)
+**Score**: X/4 (must be an integer)
+✅ **Strengths**: [What the code does well regarding LSP]
+⚠️ **Areas for Improvement**: [What needs improvement regarding LSP]
+**Analysis**: [Detailed explanation with code examples]
+
+### Interface Segregation Principle (ISP)
+**Score**: X/4 (must be an integer)
+✅ **Strengths**: [What the code does well regarding ISP]
+⚠️ **Areas for Improvement**: [What needs improvement regarding ISP]
+**Analysis**: [Detailed explanation with code examples]
+
+### Dependency Inversion Principle (DIP)
+**Score**: X/4 (must be an integer)
+✅ **Strengths**: [What the code does well regarding DIP]
+⚠️ **Areas for Improvement**: [What needs improvement regarding DIP]
+**Analysis**: [Detailed explanation with code examples]
+
+**Total SOLID Score**: X/20
+
+SCORING CRITERIA:
+- 4 points: Excellent implementation, follows the principle perfectly
+- 3 points: Good implementation, minor issues
+- 2 points: Moderate implementation, some violations
+- 1 point: Poor implementation, significant violations
+- 0 points: No adherence to the principle
+
+IMPORTANT: Scores MUST be integers (0, 1, 2, 3, or 4). No decimal scores.
+
+## 4. Quality Built-In Analysis
+Evaluate code quality across multiple dimensions:
+
+### Code Readability and Maintainability
+- Evaluate code clarity, naming conventions, and documentation
+- Assess code organization and structure
+- Check for code duplication and adherence to DRY principle
+
+### Test Coverage and Test Quality
+- Assess test coverage and test quality
+- Check for proper error handling and edge cases
+- Review logging and debugging capabilities
+
+### Performance and Security
+- Analyze performance considerations and optimizations
+- Evaluate security best practices
+- Check for proper input validation and sanitization
+
+### Code Smells and Refactoring
+- Identify code smells (Long Method, Large Class, Duplicate Code, Feature Envy, etc.)
+- Suggest refactoring opportunities
+- Recommend design patterns to address specific issues
+
+## 5. Dependency Management
+Analyze dependencies and coupling:
+
+### Coupling Analysis
+- Analyze coupling between modules/components
+- Identify tight coupling and dependencies
+- Evaluate dependency direction and flow
+
+### Circular Dependencies
+- Identify circular dependencies
+- Assess their impact on maintainability
+- Provide resolution strategies
+
+### Decoupling Recommendations
+- Suggest improvements for better decoupling
+- Recommend dependency injection patterns
+- Propose interface-based designs
+
+## 6. Abstraction Levels
+Assess abstraction practices:
+
+### Abstraction Usage
+- Assess appropriate use of abstraction
+- Evaluate abstraction levels and balance
+- Review concrete vs abstract implementations
+
+### Interface Design
+- Evaluate interface design and segregation
+- Assess abstraction contracts
+- Review API design principles
+
+### Encapsulation and Information Hiding
+- Analyze encapsulation practices
+- Review information hiding
+- Assess data protection and access control
+
+### Abstraction Hierarchies
+- Evaluate abstraction hierarchies
+- Review inheritance structures
+- Assess proper abstraction layering
+
+## 7. Conclusion/Summary
+End with a comprehensive summary:
+- Key findings from all analysis dimensions
+- Overall code quality assessment
+- Specific recommendations for improvements
+- Priority ranking of improvements
+
+IMPORTANT: Generate the content in ${languageName} language.
+
+ADDITIONAL FORMATTING REQUIREMENTS:
+
+### Tables
+Use Markdown tables to summarize:
+- Key features or components and their descriptions
+- API endpoint parameters, types, and descriptions
+- Configuration options, their types, and default values
+- Data model fields, types, constraints, and descriptions
+
+### Code Snippets (OPTIONAL)
+- Include short, relevant code snippets to illustrate key implementation details
+- Ensure snippets are well-formatted within Markdown code blocks with appropriate language identifiers
+
+### Source Citations (EXTREMELY IMPORTANT)
+- For EVERY piece of significant information, explanation, diagram, table entry, or code snippet, you MUST cite the specific source file(s) and relevant line numbers
+- Place citations at the end of the paragraph, under the diagram/table, or after the code snippet
+- Use the exact format: \`Sources: [filename.ext:start_line-end_line]()\` for a range, or \`Sources: [filename.ext:line_number]()\` for a single line
+- Multiple files can be cited: \`Sources: [file1.ext:1-10](), [file2.ext:5](), [dir/file3.ext]()\`
+- IMPORTANT: You MUST cite AT LEAST 5 different source files throughout the wiki page
+
+### Technical Accuracy (EXTREMELY IMPORTANT)
+All information must be derived SOLELY from the \`[RELEVANT_SOURCE_FILES]\`. Do not infer, invent, or use external knowledge about similar systems or common practices unless it's directly supported by the provided code.
+
+Remember:
+- Ground every claim in the provided source files
+- Prioritize accuracy and direct representation of the code's functionality and structure
+- Structure the document logically for easy understanding by other developers
+- ALWAYS follow the exact 7-section sequential order specified above
+- Create a dedicated section for each dimension using ## headings
+- Provide specific examples and code references for each dimension
+- Format each dimension as: ## [Section Number]. [Dimension Name] followed by your analysis
 `;
 
         // Prepare request body
@@ -709,7 +1036,7 @@ Remember:
         type: effectiveRepoInfo.type,
         messages: [{
           role: 'user',
-content: `Analyze this GitHub repository ${owner}/${repo} and create a wiki structure for it.
+content: `Analyze this GitHub repository ${owner}/${repo} and create a comprehensive wiki structure with code analysis dimensions.
 
 1. The complete file tree of the project:
 <file_tree>
@@ -721,7 +1048,7 @@ ${fileTree}
 ${readme}
 </readme>
 
-I want to create a wiki for this repository. Determine the most logical structure for a wiki based on the repository's content.
+I want to create a comprehensive wiki for this repository that includes both technical documentation and code analysis. The wiki should provide deep insights into the codebase architecture, design patterns, SOLID principles adherence, and overall code quality.
 
 IMPORTANT: The wiki content will be generated in ${language === 'en' ? 'English' :
             language === 'ja' ? 'Japanese (日本語)' :
@@ -735,85 +1062,614 @@ IMPORTANT: The wiki content will be generated in ${language === 'en' ? 'English'
             language === "ru" ? "Русский (Russian)" :
             'English'} language.
 
-When designing the wiki structure, include pages that would benefit from visual diagrams, such as:
-- Architecture overviews
-- Data flow descriptions
-- Component relationships
-- Process workflows
-- State machines
-- Class hierarchies
+The wiki content MUST be organized in the following sequential structure for comprehensive code analysis:
+
+## 1. Introduction
+- Project overview and purpose
+- Key features and functionality
+- Getting started information
+
+## 2. Architecture Design
+- System architecture overview (high-level architecture, component relationships)
+- Design patterns analysis (identify and analyze all design patterns used)
+- Architectural patterns (Layered, MVC, Microservices, Event-Driven, etc.)
+- Component dependencies and data flow
+- Architectural diagrams using Mermaid
+
+## 3. SOLID Principles Analysis (CRITICAL)
+- Single Responsibility Principle (SRP) - Score 0-4, strengths, areas for improvement, code examples
+- Open/Closed Principle (OCP) - Score 0-4, strengths, areas for improvement, code examples
+- Liskov Substitution Principle (LSP) - Score 0-4, strengths, areas for improvement, code examples
+- Interface Segregation Principle (ISP) - Score 0-4, strengths, areas for improvement, code examples
+- Dependency Inversion Principle (DIP) - Score 0-4, strengths, areas for improvement, code examples
+- Total SOLID Score (0-20)
+
+## 4. Quality Built-In Analysis
+- Code readability and maintainability
+- Test coverage and test quality
+- Performance and security considerations
+- Error handling and edge cases
+- Code smells and refactoring opportunities
+
+## 5. Dependency Management
+- Coupling analysis between modules/components
+- Dependency direction and flow
+- Circular dependency identification
+- Decoupling recommendations
+
+## 6. Abstraction Levels
+- Appropriate use of abstraction
+- Interface design evaluation
+- Encapsulation and information hiding
+- Abstraction hierarchy assessment
+
+## 7. Conclusion/Summary
+- Summary of key findings
+- Overall code quality assessment
+- Recommendations for improvements
 
 ${isComprehensiveView ? `
-Create a structured wiki with the following main sections:
-- Overview (general information about the project)
-- System Architecture (how the system is designed)
-- Core Features (key functionality)
-- Data Management/Flow: If applicable, how data is stored, processed, accessed, and managed (e.g., database schema, data pipelines, state management).
-- Frontend Components (UI elements, if applicable.)
-- Backend Systems (server-side components)
-- Model Integration (AI model connections)
-- Deployment/Infrastructure (how to deploy, what's the infrastructure like)
-- Extensibility and Customization: If the project architecture supports it, explain how to extend or customize its functionality (e.g., plugins, theming, custom modules, hooks).
+Each of these 7 main sections should be broken down into specific wiki pages. Create pages that provide detailed analysis for each section.
 
-Each section should contain relevant pages. For example, the "Frontend Components" section might include pages for "Home Page", "Repository Wiki Page", "Ask Component", etc.
+IMPORTANT: The wiki structure MUST follow this exact sequential order. Pages should be organized to flow logically from introduction through all analysis dimensions to conclusion.
 
 Return your analysis in the following XML format:
 
 <wiki_structure>
   <title>[Overall title for the wiki]</title>
-  <description>[Brief description of the repository]</description>
+  <description>[Brief description of the repository and its codebase]</description>
   <sections>
-    <section id="section-1">
-      <title>[Section title]</title>
+    <section id="introduction">
+      <title>1. Introduction</title>
       <pages>
-        <page_ref>page-1</page_ref>
-        <page_ref>page-2</page_ref>
+        <page_ref>project-overview</page_ref>
+        <page_ref>key-features</page_ref>
+        <page_ref>getting-started</page_ref>
       </pages>
-      <subsections>
-        <section_ref>section-2</section_ref>
-      </subsections>
     </section>
-    <!-- More sections as needed -->
+    <section id="architecture">
+      <title>2. Architecture Design</title>
+      <pages>
+        <page_ref>system-architecture</page_ref>
+        <page_ref>design-patterns</page_ref>
+        <page_ref>architectural-patterns</page_ref>
+        <page_ref>component-dependencies</page_ref>
+      </pages>
+    </section>
+    <section id="solid-principles">
+      <title>3. SOLID Principles Analysis</title>
+      <pages>
+        <page_ref>srp-analysis</page_ref>
+        <page_ref>ocp-analysis</page_ref>
+        <page_ref>lsp-analysis</page_ref>
+        <page_ref>isp-analysis</page_ref>
+        <page_ref>dip-analysis</page_ref>
+        <page_ref>solid-summary</page_ref>
+      </pages>
+    </section>
+    <section id="quality">
+      <title>4. Quality Built-In Analysis</title>
+      <pages>
+        <page_ref>code-readability</page_ref>
+        <page_ref>test-coverage</page_ref>
+        <page_ref>performance-security</page_ref>
+        <page_ref>code-smells-refactoring</page_ref>
+      </pages>
+    </section>
+    <section id="dependency">
+      <title>5. Dependency Management</title>
+      <pages>
+        <page_ref>coupling-analysis</page_ref>
+        <page_ref>dependency-flow</page_ref>
+        <page_ref>circular-dependencies</page_ref>
+        <page_ref>decoupling-recommendations</page_ref>
+      </pages>
+    </section>
+    <section id="abstraction">
+      <title>6. Abstraction Levels</title>
+      <pages>
+        <page_ref>abstraction-usage</page_ref>
+        <page_ref>interface-design</page_ref>
+        <page_ref>encapsulation</page_ref>
+        <page_ref>abstraction-hierarchy</page_ref>
+      </pages>
+    </section>
+    <section id="conclusion">
+      <title>7. Conclusion/Summary</title>
+      <pages>
+        <page_ref>key-findings</page_ref>
+        <page_ref>quality-assessment</page_ref>
+        <page_ref>recommendations</page_ref>
+      </pages>
+    </section>
   </sections>
   <pages>
-    <page id="page-1">
-      <title>[Page title]</title>
-      <description>[Brief description of what this page will cover]</description>
-      <importance>high|medium|low</importance>
+    <!-- Introduction Pages -->
+    <page id="project-overview">
+      <title>Project Overview</title>
+      <description>Comprehensive introduction to the project including its purpose, goals, target audience, and overall scope.</description>
+      <importance>high</importance>
       <relevant_files>
-        <file_path>[Path to a relevant file]</file_path>
-        <!-- More file paths as needed -->
+        <file_path>README.md</file_path>
+        <file_path>[Key project files]</file_path>
       </relevant_files>
       <related_pages>
-        <related>page-2</related>
-        <!-- More related page IDs as needed -->
+        <related>system-architecture</related>
+        <related>key-features</related>
       </related_pages>
-      <parent_section>section-1</parent_section>
+      <parent_section>introduction</parent_section>
+    </page>
+
+    <!-- Architecture Pages -->
+    <page id="system-architecture">
+      <title>System Architecture Overview</title>
+      <description>High-level architecture analysis including component relationships, data flow, and architectural patterns with Mermaid diagrams.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Architecture definition files]</file_path>
+        <file_path>[Main component files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>design-patterns</related>
+        <related>component-dependencies</related>
+      </related_pages>
+      <parent_section>architecture</parent_section>
+    </page>
+    <page id="design-patterns">
+      <title>Design Patterns Analysis</title>
+      <description>Identification and analysis of all design patterns used (Singleton, Factory, Observer, Strategy, Decorator, Adapter, etc.) with usage evaluation and alternative suggestions.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files implementing design patterns]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>system-architecture</related>
+        <related>srp-analysis</related>
+      </related_pages>
+      <parent_section>architecture</parent_section>
+    </page>
+
+    <!-- SOLID Principles Pages -->
+    <page id="srp-analysis">
+      <title>Single Responsibility Principle (SRP)</title>
+      <description>Detailed analysis of SRP adherence including score (0-4), strengths, areas for improvement, and specific code examples demonstrating the principle.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files demonstrating SRP or violations]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>ocp-analysis</related>
+        <related>design-patterns</related>
+      </related_pages>
+      <parent_section>solid-principles</parent_section>
+    </page>
+    <page id="ocp-analysis">
+      <title>Open/Closed Principle (OCP)</title>
+      <description>Detailed analysis of OCP adherence including score (0-4), strengths, areas for improvement, and specific code examples demonstrating the principle.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files demonstrating OCP or violations]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>srp-analysis</related>
+        <related>lsp-analysis</related>
+      </related_pages>
+      <parent_section>solid-principles</parent_section>
+    </page>
+    <page id="lsp-analysis">
+      <title>Liskov Substitution Principle (LSP)</title>
+      <description>Detailed analysis of LSP adherence including score (0-4), strengths, areas for improvement, and specific code examples demonstrating the principle.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files demonstrating LSP or violations]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>ocp-analysis</related>
+        <related>isp-analysis</related>
+      </related_pages>
+      <parent_section>solid-principles</parent_section>
+    </page>
+    <page id="isp-analysis">
+      <title>Interface Segregation Principle (ISP)</title>
+      <description>Detailed analysis of ISP adherence including score (0-4), strengths, areas for improvement, and specific code examples demonstrating the principle.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files demonstrating ISP or violations]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>lsp-analysis</related>
+        <related>dip-analysis</related>
+      </related_pages>
+      <parent_section>solid-principles</parent_section>
+    </page>
+    <page id="dip-analysis">
+      <title>Dependency Inversion Principle (DIP)</title>
+      <description>Detailed analysis of DIP adherence including score (0-4), strengths, areas for improvement, and specific code examples demonstrating the principle.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files demonstrating DIP or violations]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>isp-analysis</related>
+        <related>solid-summary</related>
+      </related_pages>
+      <parent_section>solid-principles</parent_section>
+    </page>
+    <page id="solid-summary">
+      <title>SOLID Principles Summary</title>
+      <description>Summary of all SOLID principles analysis with total score (0-20), overall assessment, and comprehensive recommendations for improvement.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Key implementation files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>code-readability</related>
+        <related>coupling-analysis</related>
+      </related_pages>
+      <parent_section>solid-principles</parent_section>
+    </page>
+
+    <!-- Quality Built-In Pages -->
+    <page id="code-readability">
+      <title>Code Readability and Maintainability</title>
+      <description>Evaluation of code clarity, naming conventions, documentation, code organization, and adherence to DRY principle.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Core implementation files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>test-coverage</related>
+        <related>code-smells-refactoring</related>
+      </related_pages>
+      <parent_section>quality</parent_section>
+    </page>
+    <page id="test-coverage">
+      <title>Test Coverage and Quality</title>
+      <description>Assessment of test coverage, test quality, error handling, edge cases, logging, and debugging capabilities.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Test files]</file_path>
+        <file_path>[Core files to be tested]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>code-readability</related>
+        <related>performance-security</related>
+      </related_pages>
+      <parent_section>quality</parent_section>
+    </page>
+    <page id="performance-security">
+      <title>Performance and Security</title>
+      <description>Analysis of performance considerations, optimizations, security best practices, input validation, and sanitization.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Performance critical files]</file_path>
+        <file_path>[Security sensitive files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>test-coverage</related>
+        <related>code-smells-refactoring</related>
+      </related_pages>
+      <parent_section>quality</parent_section>
+    </page>
+    <page id="code-smells-refactoring">
+      <title>Code Smells and Refactoring</title>
+      <description>Identification of code smells (Long Method, Large Class, Duplicate Code, Feature Envy, etc.) and specific refactoring recommendations.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files with potential code smells]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>code-readability</related>
+        <related>coupling-analysis</related>
+      </related_pages>
+      <parent_section>quality</parent_section>
+    </page>
+
+    <!-- Dependency Management Pages -->
+    <page id="coupling-analysis">
+      <title>Coupling Analysis</title>
+      <description>Analysis of coupling between modules/components, identification of tight coupling, and recommendations for loose coupling.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files with module dependencies]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>dependency-flow</related>
+        <related>abstraction-usage</related>
+      </related_pages>
+      <parent_section>dependency</parent_section>
+    </page>
+    <page id="dependency-flow">
+      <title>Dependency Direction and Flow</title>
+      <description>Evaluation of dependency direction, flow patterns, and architectural layering with dependency flow diagrams.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files demonstrating dependency flow]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>coupling-analysis</related>
+        <related>circular-dependencies</related>
+      </related_pages>
+      <parent_section>dependency</parent_section>
+    </page>
+    <page id="circular-dependencies">
+      <title>Circular Dependency Identification</title>
+      <description>Identification of circular dependencies and their impact on code maintainability with resolution strategies.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files with potential circular dependencies]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>dependency-flow</related>
+        <related>decoupling-recommendations</related>
+      </related_pages>
+      <parent_section>dependency</parent_section>
+    </page>
+    <page id="decoupling-recommendations">
+      <title>Decoupling Recommendations</title>
+      <description>Specific recommendations for improving decoupling, using dependency injection, interfaces, and architectural patterns.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Tightly coupled files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>circular-dependencies</related>
+        <related>interface-design</related>
+      </related_pages>
+      <parent_section>dependency</parent_section>
+    </page>
+
+    <!-- Abstraction Levels Pages -->
+    <page id="abstraction-usage">
+      <title>Abstraction Usage</title>
+      <description>Assessment of appropriate use of abstraction, abstraction levels, and balance between concrete and abstract implementations.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files using abstraction]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>interface-design</related>
+        <related>encapsulation</related>
+      </related_pages>
+      <parent_section>abstraction</parent_section>
+    </page>
+    <page id="interface-design">
+      <title>Interface Design Evaluation</title>
+      <description>Evaluation of interface design, interface segregation, abstraction contracts, and API design principles.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Interface definition files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>abstraction-usage</related>
+        <related>encapsulation</related>
+      </related_pages>
+      <parent_section>abstraction</parent_section>
+    </page>
+    <page id="encapsulation">
+      <title>Encapsulation and Information Hiding</title>
+      <description>Analysis of encapsulation practices, information hiding, data protection, and access control.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files with encapsulation]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>interface-design</related>
+        <related>abstraction-hierarchy</related>
+      </related_pages>
+      <parent_section>abstraction</parent_section>
+    </page>
+    <page id="abstraction-hierarchy">
+      <title>Abstraction Hierarchy Assessment</title>
+      <description>Evaluation of abstraction hierarchies, inheritance structures, and proper abstraction layering.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files with inheritance hierarchies]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>encapsulation</related>
+        <related>key-findings</related>
+      </related_pages>
+      <parent_section>abstraction</parent_section>
+    </page>
+
+    <!-- Conclusion Pages -->
+    <page id="key-findings">
+      <title>Key Findings Summary</title>
+      <description>Summary of key findings from all analysis dimensions including architecture, SOLID principles, quality, dependencies, and abstraction.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Key project files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>quality-assessment</related>
+        <related>recommendations</related>
+      </related_pages>
+      <parent_section>conclusion</parent_section>
+    </page>
+    <page id="quality-assessment">
+      <title>Overall Code Quality Assessment</title>
+      <description>Overall assessment of code quality across all dimensions with aggregate scoring and comparison to best practices.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Core implementation files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>key-findings</related>
+        <related>recommendations</related>
+      </related_pages>
+      <parent_section>conclusion</parent_section>
+    </page>
+    <page id="recommendations">
+      <title>Recommendations for Improvements</title>
+      <description>Comprehensive recommendations for improving code quality, architecture, SOLID principles adherence, and overall maintainability.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files needing improvement]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>quality-assessment</related>
+        <related>code-smells-refactoring</related>
+      </related_pages>
+      <parent_section>conclusion</parent_section>
     </page>
     <!-- More pages as needed -->
   </pages>
 </wiki_structure>
 ` : `
+IMPORTANT: The wiki content will be generated in ${language === 'en' ? 'English' :
+            language === 'ja' ? 'Japanese (日本語)' :
+            language === 'zh' ? 'Mandarin Chinese (中文)' :
+            language === 'zh-tw' ? 'Traditional Chinese (繁體中文)' :
+            language === 'es' ? 'Spanish (Español)' :
+            language === 'kr' ? 'Korean (한国語)' :
+            language === 'vi' ? 'Vietnamese (Tiếng Việt)' :
+            language === "pt-br" ? "Brazilian Portuguese (Português Brasileiro)" :
+            language === "fr" ? "Français (French)" :
+            language === "ru" ? "Русский (Russian)" :
+            'English'} language.
+
+For a concise wiki, follow the SAME 7-section sequential structure with simplified analysis and scoring for each section:
+
 Return your analysis in the following XML format:
 
 <wiki_structure>
   <title>[Overall title for the wiki]</title>
-  <description>[Brief description of the repository]</description>
+  <description>[Brief description of the repository and its codebase]</description>
+  <sections>
+    <section id="introduction">
+      <title>1. Introduction</title>
+      <pages>
+        <page_ref>introduction</page_ref>
+      </pages>
+    </section>
+    <section id="architecture">
+      <title>2. Architecture Design</title>
+      <pages>
+        <page_ref>architecture-design</page_ref>
+      </pages>
+    </section>
+    <section id="solid-principles">
+      <title>3. SOLID Principles Analysis</title>
+      <pages>
+        <page_ref>solid-principles</page_ref>
+      </pages>
+    </section>
+    <section id="quality">
+      <title>4. Quality Built-In Analysis</title>
+      <pages>
+        <page_ref>quality-analysis</page_ref>
+      </pages>
+    </section>
+    <section id="dependency">
+      <title>5. Dependency Management</title>
+      <pages>
+        <page_ref>dependency-management</page_ref>
+      </pages>
+    </section>
+    <section id="abstraction">
+      <title>6. Abstraction Levels</title>
+      <pages>
+        <page_ref>abstraction-levels</page_ref>
+      </pages>
+    </section>
+    <section id="conclusion">
+      <title>7. Conclusion/Summary</title>
+      <pages>
+        <page_ref>conclusion</page_ref>
+      </pages>
+    </section>
+  </sections>
   <pages>
-    <page id="page-1">
-      <title>[Page title]</title>
-      <description>[Brief description of what this page will cover]</description>
-      <importance>high|medium|low</importance>
+    <page id="introduction">
+      <title>Introduction</title>
+      <description>Concise project introduction, purpose, and key features overview.</description>
+      <importance>high</importance>
       <relevant_files>
-        <file_path>[Path to a relevant file]</file_path>
-        <!-- More file paths as needed -->
+        <file_path>README.md</file_path>
+        <file_path>[Key project files]</file_path>
       </relevant_files>
       <related_pages>
-        <related>page-2</related>
-        <!-- More related page IDs as needed -->
+        <related>architecture-design</related>
       </related_pages>
+      <parent_section>introduction</parent_section>
     </page>
-    <!-- More pages as needed -->
+    <page id="architecture-design">
+      <title>Architecture Design Analysis</title>
+      <description>High-level architecture overview, key design patterns identification with scoring, architectural pattern analysis, and component relationship summary.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Key architectural files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>solid-principles</related>
+      </related_pages>
+      <parent_section>architecture</parent_section>
+    </page>
+    <page id="solid-principles">
+      <title>SOLID Principles Analysis</title>
+      <description>Comprehensive analysis of all 5 SOLID principles with individual scores (0-4 each), total score (0-20), key strengths, and top improvement areas.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Files demonstrating SOLID principles]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>architecture-design</related>
+        <related>quality-analysis</related>
+      </related_pages>
+      <parent_section>solid-principles</parent_section>
+    </page>
+    <page id="quality-analysis">
+      <title>Quality Built-In Analysis</title>
+      <description>Simplified evaluation of code quality including readability score, test coverage assessment, performance considerations, and key code smells identified.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Core implementation files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>solid-principles</related>
+        <related>dependency-management</related>
+      </related_pages>
+      <parent_section>quality</parent_section>
+    </page>
+    <page id="dependency-management">
+      <title>Dependency Management Analysis</title>
+      <description>Analysis of coupling score, dependency flow assessment, circular dependency identification, and decoupling recommendations.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files with module dependencies]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>quality-analysis</related>
+        <related>abstraction-levels</related>
+      </related_pages>
+      <parent_section>dependency</parent_section>
+    </page>
+    <page id="abstraction-levels">
+      <title>Abstraction Levels Assessment</title>
+      <description>Evaluation of abstraction usage score, interface design assessment, encapsulation analysis, and abstraction hierarchy summary.</description>
+      <importance>medium</importance>
+      <relevant_files>
+        <file_path>[Files using abstraction]</file_path>
+      </related_files>
+      <related_pages>
+        <related>dependency-management</related>
+        <related>conclusion</related>
+      </related_pages>
+      <parent_section>abstraction</parent_section>
+    </page>
+    <page id="conclusion">
+      <title>Conclusion and Recommendations</title>
+      <description>Overall code quality score, summary of key findings across all 7 sections, and prioritized improvement recommendations.</description>
+      <importance>high</importance>
+      <relevant_files>
+        <file_path>[Key project files]</file_path>
+      </relevant_files>
+      <related_pages>
+        <related>introduction</related>
+      </related_pages>
+      <parent_section>conclusion</parent_section>
+    </page>
   </pages>
 </wiki_structure>
 `}
@@ -825,11 +1681,34 @@ IMPORTANT FORMATTING INSTRUCTIONS:
 - Ensure the XML is properly formatted and valid
 - Start directly with <wiki_structure> and end with </wiki_structure>
 
-IMPORTANT:
-1. Create ${isComprehensiveView ? '8-12' : '4-6'} pages that would make a ${isComprehensiveView ? 'comprehensive' : 'concise'} wiki for this repository
-2. Each page should focus on a specific aspect of the codebase (e.g., architecture, key features, setup)
-3. The relevant_files should be actual files from the repository that would be used to generate that page
-4. Return ONLY valid XML with the structure specified above, with no markdown code block delimiters`
+CRITICAL STRUCTURAL REQUIREMENTS:
+1. The wiki MUST follow the exact 7-section sequential order:
+   1. Introduction
+   2. Architecture Design
+   3. SOLID Principles Analysis (CRITICAL - MUST INCLUDE DETAILED SCORING)
+   4. Quality Built-In Analysis
+   5. Dependency Management
+   6. Abstraction Levels
+   7. Conclusion/Summary
+2. For ${isComprehensiveView ? 'COMPREHENSIVE' : 'CONCISE'} mode:
+   ${isComprehensiveView ? `
+   - Create 25-30 pages with detailed analysis for each section
+   - Each SOLID principle should have its own dedicated page
+   - Provide in-depth analysis with multiple code examples per principle
+   - Include comprehensive subsections for each dimension` : `
+   - Create exactly 7 pages, one for each section
+   - Each section should provide simplified analysis with scoring
+   - Include key findings and top 3 improvement areas per section
+   - Provide summary scores for each dimension (e.g., "Coupling Score: 7/10")
+   - Focus on most critical insights and actionable recommendations`}
+3. Each section MUST contain relevant pages that provide analysis
+4. The relevant_files should be actual files from the repository
+5. For SOLID Principles Analysis section, ensure comprehensive coverage:
+   - All 5 principles analyzed individually (SRP, OCP, LSP, ISP, DIP)
+   - Each principle scored 0-4 with strengths and areas for improvement
+   - Total score calculated (0-20)
+   - ${isComprehensiveView ? 'Multiple specific code examples for each principle' : 'Key code examples illustrating main points'}
+6. Return ONLY valid XML with no markdown code block delimiters`
         }]
       };
 
