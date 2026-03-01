@@ -25,7 +25,7 @@
 - **简易导航**：简单、直观的界面探索Wiki
 - **提问功能**：使用RAG驱动的AI与您的仓库聊天，获取准确答案
 - **深度研究**：多轮研究过程，彻底调查复杂主题
-- **多模型提供商**：支持Google Gemini、OpenAI、OpenRouter和本地Ollama模型
+- **多模型提供商**：支持Google Gemini、OpenAI、OpenRouter、ZhipuAI、Azure OpenAI和本地Ollama模型
 
 ## 🚀 快速开始（超级简单！）
 
@@ -68,6 +68,8 @@ GOOGLE_API_KEY=your_google_api_key
 OPENAI_API_KEY=your_openai_api_key
 # 可选：如果您想使用OpenRouter模型，添加此项
 OPENROUTER_API_KEY=your_openrouter_api_key
+# 可选：如果您想使用ZhipuAI模型，添加此项
+ZHIPUAI_API_KEY=your_zhipuai_api_key
 ```
 
 #### 步骤2：启动后端
@@ -107,7 +109,7 @@ DeepWiki使用AI来：
 
 1. 克隆并分析GitHub、GitLab或Bitbucket仓库（包括使用令牌认证的私有仓库）
 2. 创建代码嵌入用于智能检索
-3. 使用上下文感知AI生成文档（使用Google Gemini、OpenAI、OpenRouter或本地Ollama模型）
+3. 使用上下文感知AI生成文档（使用Google Gemini、OpenAI、OpenRouter、ZhipuAI、Azure OpenAI或本地Ollama模型）
 4. 创建可视化图表解释代码关系
 5. 将所有内容组织成结构化Wiki
 6. 通过提问功能实现与仓库的智能问答
@@ -126,12 +128,16 @@ graph TD
     M -->|Google Gemini| E1[使用Gemini生成]
     M -->|OpenAI| E2[使用OpenAI生成]
     M -->|OpenRouter| E3[使用OpenRouter生成]
-    M -->|本地Ollama| E4[使用Ollama生成]
+    M -->|ZhipuAI| E4[使用ZhipuAI生成]
+    M -->|本地Ollama| E5[使用Ollama生成]
+    M -->|Azure| E6[使用Azure生成]
 
     E1 --> E[生成文档]
     E2 --> E
     E3 --> E
     E4 --> E
+    E5 --> E
+    E6 --> E
 
     D --> F[创建可视化图表]
     E --> G[组织为Wiki]
@@ -147,6 +153,134 @@ graph TD
     class AA,M decision;
     class B,C,E,F,G,AB,E1,E2,E3,E4 process;
     class H result;
+```
+
+## 🧠 代码分析与 SOLID 原则评估
+
+DeepWiki 包含全面的代码分析功能，可自动评估 SOLID 原则：
+
+### 分析维度
+
+DeepWiki 从 **7 个关键维度** 分析代码：
+
+1. **架构设计** - 设计模式、架构模式、关注点分离
+2. **SOLID 原则** - 自动评分评估（每项 0-4 分，总分 0-20）
+3. **质量内建** - 代码可读性、测试覆盖率、错误处理、安全性
+4. **代码味道与重构** - 识别反模式并提供改进建议
+5. **设计模式应用** - 评估模式使用并建议替代方案
+6. **依赖管理** - 分析耦合度、循环依赖
+7. **抽象层次** - 评估接口、封装、抽象层次
+
+### SOLID 原则评分
+
+每个 SOLID 原则按 **0-4 分** 评估：
+
+- **4 分**：优秀实现，完全遵循原则
+- **3 分**：良好实现，有轻微问题
+- **2 分**：中等实现，存在一些违规
+- **1 分**：差实现，存在重大违规
+- **0 分**：未遵循该原则
+
+**SOLID 总分**：所有 5 个原则的总和（0-20 分）
+
+### 分析流程
+
+```mermaid
+graph TD
+    A[用户查询] --> B{查询类型?}
+    B -->|代码分析| C{研究深度?}
+    B -->|简单问题| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|深度研究| E[DEEP_RESEARCH 迭代]
+    C -->|快速分析| D
+    
+    E --> E1[迭代 1: 研究计划]
+    E1 --> E2{更多迭代?}
+    E2 -->|是| E3[中间迭代]
+    E3 --> E4[迭代 2-3: 深入研究]
+    E4 --> E5{最终迭代?}
+    E5 -->|否| E3
+    E5 -->|是| E6[最终迭代]
+    E2 -->|否| E6
+    
+    D --> F[应用分析框架]
+    E6 --> F
+    
+    F --> F1[维度 1: 架构设计]
+    F --> F2[维度 2: SOLID 原则]
+    F --> F3[维度 3: 质量内建]
+    F --> F4[维度 4: 代码味道]
+    F --> F5[维度 5: 设计模式]
+    F --> F6[维度 6: 依赖管理]
+    F --> F7[维度 7: 抽象层次]
+    
+    F1 --> G[生成结构化报告]
+    F2 --> H[SOLID 原则分析]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[SRP 评分 + 分析]
+    H --> H2[OCP 评分 + 分析]
+    H --> H3[LSP 评分 + 分析]
+    H --> H4[ISP 评分 + 分析]
+    H --> H5[DIP 评分 + 分析]
+    
+    H1 --> I[SOLID 总分]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[最终报告]
+    G --> J
+    
+    J --> K[输出格式]
+    K --> K1[## 维度名称]
+    K --> K2[✅ 优势]
+    K --> K3[⚠️ 改进建议]
+    K --> K4[**分析** 包含代码示例]
+    K --> K5[**评分**: X/4]
+    K --> K6[**总分**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### SOLID 分析输出示例
+
+当分析代码时，DeepWiki 提供结构化反馈，如下所示：
+
+```markdown
+## SOLID 原则
+
+### 单一职责原则 (SRP)
+**评分**: 3/4
+✅ **优势**: UserService 类职责清晰且聚焦
+⚠️ **改进建议**: UserController 混合了日志记录与业务逻辑
+**分析**: UserService 类设计良好，具有单一职责。但 UserController 违反了 SRP，因为它同时处理 HTTP 请求和日志记录关注点。
+
+### 开闭原则 (OCP)
+**评分**: 2/4
+✅ **优势**: PaymentProcessor 接口允许扩展
+⚠️ **改进建议**: 添加新支付类型需要修改现有的 switch 语句
+**分析**: 虽然接口支持扩展，但实现使用的条件逻辑违反了 OCP。建议使用策略模式。
+
+[... 继续分析 LSP、ISP、DIP ...]
+
+**SOLID 总分**: 14/20
 ```
 
 ## 🛠️ 项目结构
@@ -259,6 +393,8 @@ DeepWiki 现在实现了灵活的基于提供者的模型选择系统，支持�
 - **Google**: 默认使用 `gemini-2.5-flash`，还支持 `gemini-2.5-flash-lite`、`gemini-2.5-pro` 等
 - **OpenAI**: 默认使用 `gpt-5-nano`，还支持 `gpt-5`, `4o` 等
 - **OpenRouter**: 通过统一 API 访问多种模型，包括 Claude、Llama、Mistral 等
+- **ZhipuAI**: 默认使用 `glm-4-flash`，还支持 `glm-4-plus`、`glm-4-air` 等
+- **Azure OpenAI**: 默认使用 `gpt-4o`，还支持 `o4-mini` 等
 - **Ollama**: 支持本地运行的开源模型，如 `llama3`
 
 ### 环境变量
@@ -270,6 +406,10 @@ DeepWiki 现在实现了灵活的基于提供者的模型选择系统，支持�
 GOOGLE_API_KEY=你的谷歌API密钥        # 使用 Google Gemini 模型必需
 OPENAI_API_KEY=你的OpenAI密钥        # 使用 OpenAI 模型必需
 OPENROUTER_API_KEY=你的OpenRouter密钥 # 使用 OpenRouter 模型必需
+ZHIPUAI_API_KEY=你的ZhipuAI密钥      # 使用 ZhipuAI 模型必需
+
+# 并发控制
+ZHIPUAI_MAX_CONCURRENT=2             # ZhipuAI 最大并发请求数（默认：2）
 
 # OpenAI API 基础 URL 配置
 OPENAI_BASE_URL=https://自定义API端点.com/v1  # 可选，用于自定义 OpenAI API 端点

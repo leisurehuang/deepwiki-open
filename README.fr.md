@@ -26,7 +26,7 @@
 - **Navigation facile** : Interface simple et intuitive
 - **Fonction “Ask”** : Posez des questions à votre dépôt avec une IA alimentée par RAG
 - **DeepResearch** : Processus de recherche multi-étapes pour explorer des sujets complexes
-- **Multiples fournisseurs de modèles IA** : Prise en charge de Google Gemini, OpenAI, OpenRouter, et Ollama local
+- **Multiples fournisseurs de modèles IA** : Prise en charge de Google Gemini, OpenAI, OpenRouter, ZhipuAI, Azure OpenAI et Ollama local
 
 ## 🚀 Démarrage rapide (super facile !)
 
@@ -42,6 +42,8 @@ echo "GOOGLE_API_KEY=votre_clé_google" > .env
 echo "OPENAI_API_KEY=votre_clé_openai" >> .env
 # Facultatif : clé OpenRouter
 echo "OPENROUTER_API_KEY=votre_clé_openrouter" >> .env
+# Facultatif : clé ZhipuAI
+echo "ZHIPUAI_API_KEY=votre_clé_zhipuai" >> .env
 # Facultatif : hôte personnalisé Ollama
 echo "OLLAMA_HOST=votre_hote_ollama" >> .env
 # Facultatif : Azure OpenAI
@@ -157,6 +159,262 @@ graph TD
     class AA,M decision;
     class B,C,E,F,G,AB,E1,E2,E3,E4,E5 process;
     class H result;
+```
+
+## 🧠 Analyse de Code et Évaluation des Principes SOLID
+
+DeepWiki inclut des capacités complètes d'analyse de code avec une évaluation automatique des principes SOLID :
+
+### Dimensions de l'Analyse
+
+DeepWiki analyse le code sur **7 dimensions clés** :
+
+1. **Conception d'Architecture** - Modèles de conception, modèles architecturaux, séparation des préoccupations
+2. **Principes SOLID** - Évaluation automatisée avec score (0-4 par principe, 0-20 total)
+3. **Qualité Intégrée** - Lisibilité du code, couverture des tests, gestion des erreurs, sécurité
+4. **Code Smells et Refactorisation** - Identifier les anti-patterns et suggérer des améliorations
+5. **Application des Modèles de Conception** - Évaluer l'utilisation des modèles et suggérer des alternatives
+6. **Gestion des Dépendances** - Analyser le couplage, les dépendances circulaires
+7. **Niveaux d'Abstraction** - Évaluer les interfaces, l'encapsulation, les hiérarchies d'abstraction
+
+### Score des Principes SOLID
+
+Chaque principe SOLID est évalué sur une **échelle de 0-4** :
+
+- **4 points** : Implémentation excellente, suit parfaitement le principe
+- **3 points** : Bonne implémentation, problèmes mineurs
+- **2 points** : Implémentation modérée, quelques violations
+- **1 point** : Mauvaise implémentation, violations significatives
+- **0 point** : N'adhère pas au principe
+
+**Score Total SOLID** : Somme des 5 principes (0-20)
+
+### Flux d'Analyse
+
+```mermaid
+graph TD
+    A[Requête Utilisateur] --> B{Type de Requête?}
+    B -->|Analyse de Code| C{Profondeur de Recherche?}
+    B -->|Question Simple| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|Recherche Approfondie| E[Itérations DEEP_RESEARCH]
+    C -->|Analyse Rapide| D
+    
+    E --> E1[Itération 1: Plan de Recherche]
+    E1 --> E2{Plus d'Itérations?}
+    E2 -->|Oui| E3[Itérations Intermédiaires]
+    E3 --> E4[Itération 2-3: Approfondissement]
+    E4 --> E5{Itération Finale?}
+    E5 -->|Non| E3
+    E5 -->|Oui| E6[Itération Finale]
+    E2 -->|Non| E6
+    
+    D --> F[Appliquer le Framework d'Analyse]
+    E6 --> F
+    
+    F --> F1[Dimension 1: Conception d'Architecture]
+    F --> F2[Dimension 2: Principes SOLID]
+    F --> F3[Dimension 3: Qualité Intégrée]
+    F --> F4[Dimension 4: Code Smells]
+    F --> F5[Dimension 5: Modèles de Conception]
+    F --> F6[Dimension 6: Dépendances]
+    F --> F7[Dimension 7: Abstraction]
+    
+    F1 --> G[Générer un Rapport Structuré]
+    F2 --> H[Analyse des Principes SOLID]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[Score SRP + Analyse]
+    H --> H2[Score OCP + Analyse]
+    H --> H3[Score LSP + Analyse]
+    H --> H4[Score ISP + Analyse]
+    H --> H5[Score DIP + Analyse]
+    
+    H1 --> I[Score Total SOLID]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[Rapport Final]
+    G --> J
+    
+    J --> K[Format de Sortie]
+    K --> K1[## Nom de la Dimension]
+    K --> K2[✅ Forces]
+    K --> K3[⚠️ Axes d'Amélioration]
+    K --> K4[**Analyse** avec Exemples de Code]
+    K --> K5[**Score** : X/4]
+    K --> K6[**Score Total** : X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### Exemple de Sortie d'Analyse SOLID
+
+Lors de l'analyse du code, DeepWiki fournit des commentaires structurés comme celui-ci :
+
+```markdown
+## Principes SOLID
+
+### Principe de la Responsabilité Unique (SRP)
+**Score** : 3/4
+✅ **Forces** : La classe UserService a une responsabilité claire et ciblée
+⚠️ **Axes d'Amélioration** : UserController mélange la journalisation avec la logique métier
+**Analyse** : La classe UserService est bien conçue avec une seule responsabilité. Cependant, UserController viole SRP en gérant à la fois les requêtes HTTP et les préoccupations de journalisation.
+
+### Principe Ouvert-Fermé (OCP)
+**Score** : 2/4
+✅ **Forces** : L'interface PaymentProcessor permet des extensions
+⚠️ **Axes d'Amélioration** : Ajouter de nouveaux types de paiement nécessite de modifier l'instruction switch existante
+**Analyse** : Bien que l'interface prenne en charge les extensions, l'implémentation utilise une logique conditionnelle qui viole OCP. Envisagez d'utiliser le pattern Strategy.
+
+[... continue pour LSP, ISP, DIP ...]
+
+**Score Total SOLID** : 14/20
+```
+
+## 🧠 Analyse de Code et Évaluation des Principes SOLID
+
+DeepWiki inclut des capacités complètes d'analyse de code avec une évaluation automatique des principes SOLID :
+
+### Dimensions de l'Analyse
+
+DeepWiki analyse le code sur **7 dimensions clés** :
+
+1. **Conception d'Architecture** - Modèles de conception, modèles architecturaux, séparation des préoccupations
+2. **Principes SOLID** - Évaluation automatisée avec score (0-4 par principe, 0-20 total)
+3. **Qualité Intégrée** - Lisibilité du code, couverture des tests, gestion des erreurs, sécurité
+4. **Code Smells et Refactorisation** - Identifier les anti-patterns et suggérer des améliorations
+5. **Application des Modèles de Conception** - Évaluer l'utilisation des modèles et suggérer des alternatives
+6. **Gestion des Dépendances** - Analyser le couplage, les dépendances circulaires
+7. **Niveaux d'Abstraction** - Évaluer les interfaces, l'encapsulation, les hiérarchies d'abstraction
+
+### Score des Principes SOLID
+
+Chaque principe SOLID est évalué sur une **échelle de 0-4** :
+
+- **4 points** : Implémentation excellente, suit parfaitement le principe
+- **3 points** : Bonne implémentation, problèmes mineurs
+- **2 points** : Implémentation modérée, quelques violations
+- **1 point** : Mauvaise implémentation, violations significatives
+- **0 point** : N'adhère pas au principe
+
+**Score Total SOLID** : Somme des 5 principes (0-20)
+
+### Flux d'Analyse
+
+```mermaid
+graph TD
+    A[Requête Utilisateur] --> B{Type de Requête?}
+    B -->|Analyse de Code| C{Profondeur de Recherche?}
+    B -->|Question Simple| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|Recherche Approfondie| E[Itérations DEEP_RESEARCH]
+    C -->|Analyse Rapide| D
+    
+    E --> E1[Itération 1: Plan de Recherche]
+    E1 --> E2{Plus d'Itérations?}
+    E2 -->|Oui| E3[Itérations Intermédiaires]
+    E3 --> E4[Itération 2-3: Approfondissement]
+    E4 --> E5{Itération Finale?}
+    E5 -->|Non| E3
+    E5 -->|Oui| E6[Itération Finale]
+    E2 -->|Non| E6
+    
+    D --> F[Appliquer le Framework d'Analyse]
+    E6 --> F
+    
+    F --> F1[Dimension 1: Conception d'Architecture]
+    F --> F2[Dimension 2: Principes SOLID]
+    F --> F3[Dimension 3: Qualité Intégrée]
+    F --> F4[Dimension 4: Code Smells]
+    F --> F5[Dimension 5: Modèles de Conception]
+    F --> F6[Dimension 6: Dépendances]
+    F --> F7[Dimension 7: Abstraction]
+    
+    F1 --> G[Générer un Rapport Structuré]
+    F2 --> H[Analyse des Principes SOLID]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[Score SRP + Analyse]
+    H --> H2[Score OCP + Analyse]
+    H --> H3[Score LSP + Analyse]
+    H --> H4[Score ISP + Analyse]
+    H --> H5[Score DIP + Analyse]
+    
+    H1 --> I[Score Total SOLID]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[Rapport Final]
+    G --> J
+    
+    J --> K[Format de Sortie]
+    K --> K1[## Nom de la Dimension]
+    K --> K2[✅ Forces]
+    K --> K3[⚠️ Axes d'Amélioration]
+    K --> K4[**Analyse** avec Exemples de Code]
+    K --> K5[**Score** : X/4]
+    K --> K6[**Score Total** : X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### Exemple de Sortie d'Analyse SOLID
+
+Lors de l'analyse du code, DeepWiki fournit des commentaires structurés comme celui-ci :
+
+```markdown
+## Principes SOLID
+
+### Principe de la Responsabilité Unique (SRP)
+**Score** : 3/4
+✅ **Forces** : La classe UserService a une responsabilité claire et ciblée
+⚠️ **Axes d'Amélioration** : UserController mélange la journalisation avec la logique métier
+**Analyse** : La classe UserService est bien conçue avec une seule responsabilité. Cependant, UserController viole SRP en gérant à la fois les requêtes HTTP et les préoccupations de journalisation.
+
+### Principe Ouvert-Fermé (OCP)
+**Score** : 2/4
+✅ **Forces** : L'interface PaymentProcessor permet des extensions
+⚠️ **Axes d'Amélioration** : Ajouter de nouveaux types de paiement nécessite de modifier l'instruction switch existante
+**Analyse** : Bien que l'interface prenne en charge les extensions, l'implémentation utilise une logique conditionnelle qui viole OCP. Envisagez d'utiliser le pattern Strategy.
+
+[... continue pour LSP, ISP, DIP ...]
+
+**Score Total SOLID** : 14/20
 ```
 
 ## 🛠️ Structure du Projet

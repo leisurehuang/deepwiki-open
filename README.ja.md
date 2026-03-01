@@ -41,6 +41,9 @@ echo "GOOGLE_API_KEY=your_google_api_key" > .env
 echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 # オプション: OpenRouterモデルを使用する場合はOpenRouter APIキーを追加
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# 可选：如果您想使用 ZhipuAI 模型，添加 ZhipuAI API 密钥
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
+
 
 # Docker Composeで実行
 docker-compose up
@@ -151,6 +154,134 @@ graph TD
     class H result;
 ```
 
+## 🧠 コード分析とSOLID原則の評価
+
+DeepWikiには、包括的なコード分析機能とSOLID原則の自動評価が含まれています：
+
+### 分析の次元
+
+DeepWikiは**7つの重要な次元**でコードを分析します：
+
+1. **アーキテクチャ設計** - デザインパターン、アーキテクチャパターン、関心の分離
+2. **SOLID原則** - 自動スコアリング評価（各項目0-4点、総合0-20点）
+3. **品質の内蔵** - コードの可読性、テストカバレッジ、エラー処理、セキュリティ
+4. **コードの臭いとリファクタリング** - アンチパターンの特定と改善提案
+5. **デザインパターンの適用** - パターン使用の評価と代替案の提案
+6. **依存関係の管理** - 結合度、循環依存の分析
+7. **抽象化レベル** - インターフェース、カプセル化、抽象化階層の評価
+
+### SOLID原則のスコアリング
+
+各SOLID原則は**0-4点**で評価されます：
+
+- **4点**：優秀な実装、原則を完全に従っている
+- **3点**：良好な実装、軽微な問題あり
+- **2点**：中程度の実装、いくつかの違反あり
+- **1点**：劣悪な実装、重大な違反あり
+- **0点**：原則に従っていない
+
+**SOLID総合スコア**：すべて5つの原則の合計（0-20点）
+
+### 分析フロー
+
+```mermaid
+graph TD
+    A[ユーザークエリ] --> B{クエリタイプ?}
+    B -->|コード分析| C{研究深度?}
+    B -->|シンプルな質問| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|ディープリサーチ| E[DEEP_RESEARCH 反復]
+    C -->|クイック分析| D
+    
+    E --> E1[反復 1: 研究計画]
+    E1 --> E2{さらなる反復?}
+    E2 -->|はい| E3[中間反復]
+    E3 --> E4[反復 2-3: 深掘り]
+    E4 --> E5{最終反復?}
+    E5 -->|いいえ| E3
+    E5 -->|はい| E6[最終反復]
+    E2 -->|いいえ| E6
+    
+    D --> F[分析フレームワークを適用]
+    E6 --> F
+    
+    F --> F1[次元 1: アーキテクチャ設計]
+    F --> F2[次元 2: SOLID原則]
+    F --> F3[次元 3: 品質の内蔵]
+    F --> F4[次元 4: コードの臭い]
+    F --> F5[次元 5: デザインパターン]
+    F --> F6[次元 6: 依存関係]
+    F --> F7[次元 7: 抽象化]
+    
+    F1 --> G[構造化レポートを生成]
+    F2 --> H[SOLID原則分析]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[SRP スコア + 分析]
+    H --> H2[OCP スコア + 分析]
+    H --> H3[LSP スコア + 分析]
+    H --> H4[ISP スコア + 分析]
+    H --> H5[DIP スコア + 分析]
+    
+    H1 --> I[SOLID総合スコア]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[最終レポート]
+    G --> J
+    
+    J --> K[出力フォーマット]
+    K --> K1[## 次元名]
+    K --> K2[✅ 強み]
+    K --> K3[⚠️ 改善領域]
+    K --> K4[**分析** コード例付き]
+    K --> K5[**スコア**: X/4]
+    K --> K6[**総合スコア**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### SOLID分析出力例
+
+コードを分析する際、DeepWikiは以下のような構造化されたフィードバックを提供します：
+
+```markdown
+## SOLID原則
+
+### 単一責任の原則 (SRP)
+**スコア**: 3/4
+✅ **強み**: UserServiceクラスは明確で集中した責任を持っています
+⚠️ **改善領域**: UserControllerはログ記録とビジネスロジックを混在させています
+**分析**: UserServiceクラスは設計が良く、単一の責任を持っています。しかし、UserControllerはHTTPリクエストとログ記録の両方を処理するため、SRPに違反しています。
+
+### 開放閉鎖の原則 (OCP)
+**スコア**: 2/4
+✅ **強み**: PaymentProcessorインターフェースは拡張を可能にします
+⚠️ **改善領域**: 新しい支払いタイプを追加するには、既存のswitchステートメントを変更する必要があります
+**分析**: インターフェースは拡張をサポートしていますが、実装は条件論理を使用しており、OCPに違反しています。ストラテジーパターンの使用を検討してください。
+
+[... LSP、ISP、DIPの分析を継続 ...]
+
+**SOLID総合スコア**: 14/20
+```
+
 ## 🛠️ プロジェクト構造
 
 ```
@@ -247,6 +378,9 @@ docker-compose up
 echo "GOOGLE_API_KEY=your_google_api_key" > .env
 echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# 可选：如果您想使用 ZhipuAI 模型，添加 ZhipuAI API 密钥
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
+
 
 # .envファイルをマウントしてコンテナを実行
 docker run -p 8001:8001 -p 3000:3000 \

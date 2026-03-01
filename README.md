@@ -34,8 +34,8 @@
 - **Easy Navigation**: Simple, intuitive interface to explore the wiki
 - **Ask Feature**: Chat with your repository using RAG-powered AI to get accurate answers
 - **DeepResearch**: Multi-turn research process that thoroughly investigates complex topics
-- **Multiple Model Providers**: Support for Google Gemini, OpenAI, OpenRouter, and local Ollama models
-- **Flexible Embeddings**: Choose between OpenAI, Google AI, or local Ollama embeddings for optimal performance
+- **Multiple Model Providers**: Support for Google Gemini, OpenAI, OpenRouter, ZhipuAI, Azure OpenAI, and local Ollama models
+- **Flexible Embeddings**: Choose between OpenAI, Google AI, ZhipuAI, or local Ollama embeddings for optimal performance
 
 ## 🚀 Quick Start (Super Easy!)
 
@@ -53,6 +53,8 @@ echo "OPENAI_API_KEY=your_openai_api_key" >> .env
 echo "DEEPWIKI_EMBEDDER_TYPE=google" >> .env
 # Optional: Add OpenRouter API key if you want to use OpenRouter models
 echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+# Optional: Add ZhipuAI API key if you want to use ZhipuAI models
+echo "ZHIPUAI_API_KEY=your_zhipuai_api_key" >> .env
 # Optional: Add Ollama host if not local. defaults to http://localhost:11434
 echo "OLLAMA_HOST=your_ollama_host" >> .env
 # Optional: Add Azure API key, endpoint and version if you want to use azure openai models
@@ -128,7 +130,7 @@ DeepWiki uses AI to:
 
 1. Clone and analyze the GitHub, GitLab, or Bitbucket repository (including private repos with token authentication)
 2. Create embeddings of the code for smart retrieval
-3. Generate documentation with context-aware AI (using Google Gemini, OpenAI, OpenRouter, Azure OpenAI, or local Ollama models)
+3. Generate documentation with context-aware AI (using Google Gemini, OpenAI, OpenRouter, ZhipuAI, Azure OpenAI, or local Ollama models)
 4. Create visual diagrams to explain code relationships
 5. Organize everything into a structured wiki
 6. Enable intelligent Q&A with the repository through the Ask feature
@@ -147,14 +149,16 @@ graph TD
     M -->|Google Gemini| E1[Generate with Gemini]
     M -->|OpenAI| E2[Generate with OpenAI]
     M -->|OpenRouter| E3[Generate with OpenRouter]
-    M -->|Local Ollama| E4[Generate with Ollama]
-    M -->|Azure| E5[Generate with Azure]
+    M -->|ZhipuAI| E4[Generate with ZhipuAI]
+    M -->|Local Ollama| E5[Generate with Ollama]
+    M -->|Azure| E6[Generate with Azure]
 
     E1 --> E[Generate Documentation]
     E2 --> E
     E3 --> E
     E4 --> E
     E5 --> E
+    E6 --> E
 
     D --> F[Create Visual Diagrams]
     E --> G[Organize as Wiki]
@@ -170,6 +174,134 @@ graph TD
     class AA,M decision;
     class B,C,E,F,G,AB,E1,E2,E3,E4,E5 process;
     class H result;
+```
+
+## 🧠 Code Analysis and SOLID Principles Evaluation
+
+DeepWiki includes comprehensive code analysis capabilities with automatic SOLID principles evaluation:
+
+### Analysis Dimensions
+
+DeepWiki analyzes code across **7 key dimensions**:
+
+1. **Architecture Design** - Design patterns, architectural patterns, separation of concerns
+2. **SOLID Principles** - Automated evaluation with scoring (0-4 per principle, 0-20 total)
+3. **Quality Built-In** - Code readability, test coverage, error handling, security
+4. **Code Smells & Refactoring** - Identify anti-patterns and suggest improvements
+5. **Design Patterns Application** - Evaluate pattern usage and suggest alternatives
+6. **Dependency Management** - Analyze coupling, circular dependencies
+7. **Abstraction Levels** - Assess interfaces, encapsulation, abstraction hierarchies
+
+### SOLID Principles Scoring
+
+Each SOLID principle is evaluated on a **0-4 scale**:
+
+- **4 points**: Excellent implementation, follows the principle perfectly
+- **3 points**: Good implementation, minor issues
+- **2 points**: Moderate implementation, some violations
+- **1 point**: Poor implementation, significant violations
+- **0 points**: No adherence to the principle
+
+**Total SOLID Score**: Sum of all 5 principles (0-20)
+
+### Analysis Flow
+
+```mermaid
+graph TD
+    A[User Query] --> B{Query Type?}
+    B -->|Code Analysis| C{Research Depth?}
+    B -->|Simple Question| D[SIMPLE_CHAT_SYSTEM_PROMPT]
+    C -->|Deep Research| E[DEEP_RESEARCH Iterations]
+    C -->|Quick Analysis| D
+    
+    E --> E1[Iteration 1: Research Plan]
+    E1 --> E2{More Iterations?}
+    E2 -->|Yes| E3[Intermediate Iterations]
+    E3 --> E4[Iteration 2-3: Deep Dive]
+    E4 --> E5{Final Iteration?}
+    E5 -->|No| E3
+    E5 -->|Yes| E6[Final Iteration]
+    E2 -->|No| E6
+    
+    D --> F[Apply Analysis Framework]
+    E6 --> F
+    
+    F --> F1[Dimension 1: Architecture Design]
+    F --> F2[Dimension 2: SOLID Principles]
+    F --> F3[Dimension 3: Quality Built-In]
+    F --> F4[Dimension 4: Code Smells]
+    F --> F5[Dimension 5: Design Patterns]
+    F --> F6[Dimension 6: Dependencies]
+    F --> F7[Dimension 7: Abstraction]
+    
+    F1 --> G[Generate Structured Report]
+    F2 --> H[SOLID Principles Analysis]
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    
+    H --> H1[SRP Score + Analysis]
+    H --> H2[OCP Score + Analysis]
+    H --> H3[LSP Score + Analysis]
+    H --> H4[ISP Score + Analysis]
+    H --> H5[DIP Score + Analysis]
+    
+    H1 --> I[Total SOLID Score]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    H5 --> I
+    
+    I --> J[Final Report]
+    G --> J
+    
+    J --> K[Output Format]
+    K --> K1[## Dimension Name]
+    K --> K2[✅ Strengths]
+    K --> K3[⚠️ Areas for Improvement]
+    K --> K4[**Analysis** with Code Examples]
+    K --> K5[**Score**: X/4]
+    K --> K6[**Total Score**: X/20]
+    
+    classDef input stroke-width:2px;
+    classDef decision stroke-width:2px,stroke-dasharray: 5 5;
+    classDef process stroke-width:2px;
+    classDef analysis stroke-width:2px,fill:#e1f5ff;
+    classDef solid stroke-width:2px,fill:#fff3e0;
+    classDef output stroke-width:2px,fill:#e8f5e9;
+    
+    class A input;
+    class B,C,E2,E5 decision;
+    class D,E,E1,E3,E4,E6,F process;
+    class F1,F2,F3,F4,F5,F6,F7 analysis;
+    class H,H1,H2,H3,H4,H5 solid;
+    class G,I,J,K,K1,K2,K3,K4,K5,K6 output;
+```
+
+### Example SOLID Analysis Output
+
+When analyzing code, DeepWiki provides structured feedback like this:
+
+```markdown
+## SOLID Principles
+
+### Single Responsibility Principle (SRP)
+**Score**: 3/4
+✅ **Strengths**: UserService class has a clear, focused responsibility
+⚠️ **Areas for Improvement**: UserController mixes logging with business logic
+**Analysis**: The UserService class is well-designed with a single responsibility. However, the UserController violates SRP by handling both HTTP requests and logging concerns.
+
+### Open/Closed Principle (OCP)
+**Score**: 2/4
+✅ **Strengths**: PaymentProcessor interface allows extension
+⚠️ **Areas for Improvement**: Adding new payment types requires modifying existing switch statement
+**Analysis**: While the interface supports extension, the implementation uses conditional logic that violates OCP. Consider using the Strategy pattern.
+
+[... continues for LSP, ISP, DIP ...]
+
+**Total SOLID Score**: 14/20
 ```
 
 ## 🛠️ Project Structure
@@ -204,6 +336,7 @@ DeepWiki now implements a flexible provider-based model selection system support
 - **Google**: Default `gemini-2.5-flash`, also supports `gemini-2.5-flash-lite`, `gemini-2.5-pro`, etc.
 - **OpenAI**: Default `gpt-5-nano`, also supports `gpt-5`, `4o`, etc.
 - **OpenRouter**: Access to multiple models via a unified API, including Claude, Llama, Mistral, etc.
+- **ZhipuAI**: Default `glm-4-flash`, also supports `glm-4-plus`, `glm-4-air`, etc.
 - **Azure OpenAI**: Default `gpt-4o`, also supports `o4-mini`, etc.
 - **Ollama**: Support for locally running open-source models like `llama3`
 
@@ -216,6 +349,7 @@ Each provider requires its corresponding API key environment variables:
 GOOGLE_API_KEY=your_google_api_key        # Required for Google Gemini models
 OPENAI_API_KEY=your_openai_api_key        # Required for OpenAI models
 OPENROUTER_API_KEY=your_openrouter_api_key # Required for OpenRouter models
+ZHIPUAI_API_KEY=your_zhipuai_api_key      # Required for ZhipuAI models
 AZURE_OPENAI_API_KEY=your_azure_openai_api_key  #Required for Azure OpenAI models
 AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint  #Required for Azure OpenAI models
 AZURE_OPENAI_VERSION=your_azure_openai_version  #Required for Azure OpenAI models
@@ -235,7 +369,7 @@ DEEPWIKI_CONFIG_DIR=/path/to/custom/config/dir  # Optional, for custom config fi
 DeepWiki uses JSON configuration files to manage various aspects of the system:
 
 1. **`generator.json`**: Configuration for text generation models
-   - Defines available model providers (Google, OpenAI, OpenRouter, Azure, Ollama)
+   - Defines available model providers (Google, OpenAI, OpenRouter, ZhipuAI, Azure, Ollama)
    - Specifies default and available models for each provider
    - Contains model-specific parameters like temperature and top_p
 
@@ -341,6 +475,7 @@ docker-compose up
 |------|-------------|------------------|-------|
 | `openai` | OpenAI embeddings (default) | `OPENAI_API_KEY` | Uses `text-embedding-3-small` model |
 | `google` | Google AI embeddings | `GOOGLE_API_KEY` | Uses `text-embedding-004` model |
+| `zhipuai` | ZhipuAI embeddings | `ZHIPUAI_API_KEY` | Uses ZhipuAI embedding models |
 | `ollama` | Local Ollama embeddings | None | Requires local Ollama installation |
 
 ### Why Use Google AI Embeddings?
@@ -412,6 +547,7 @@ docker-compose up
 | `GOOGLE_API_KEY`     | Google Gemini API key for AI generation and embeddings      | No | Required for Google Gemini models and Google AI embeddings                                               
 | `OPENAI_API_KEY`     | OpenAI API key for embeddings and models                     | Conditional | Required if using OpenAI embeddings or models                                                            |
 | `OPENROUTER_API_KEY` | OpenRouter API key for alternative models                    | No | Required only if you want to use OpenRouter models                                                       |
+| `ZHIPUAI_API_KEY`    | ZhipuAI API key for AI generation and embeddings            | No | Required only if you want to use ZhipuAI models and embeddings                                           |
 | `AWS_ACCESS_KEY_ID`  | AWS access key ID for Bedrock                                 | No | Required for Bedrock if not using instance/role-based credentials                                        |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret access key for Bedrock                          | No | Required for Bedrock if not using instance/role-based credentials                                        |
 | `AWS_SESSION_TOKEN`  | AWS session token for Bedrock (STS)                            | No | Required when using temporary credentials                                                                |
@@ -421,7 +557,7 @@ docker-compose up
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint                    | No | Required only if you want to use Azure OpenAI models                                                       |
 | `AZURE_OPENAI_VERSION` | Azure OpenAI version                     | No | Required only if you want to use Azure OpenAI models                                                       |
 | `OLLAMA_HOST`        | Ollama Host (default: http://localhost:11434)                | No | Required only if you want to use external Ollama server                                                  |
-| `DEEPWIKI_EMBEDDER_TYPE` | Embedder type: `openai`, `google`, `ollama`, or `bedrock` (default: `openai`) | No | Controls which embedding provider to use                                                              |
+| `DEEPWIKI_EMBEDDER_TYPE` | Embedder type: `openai`, `google`, `zhipuai`, `ollama`, or `bedrock` (default: `openai`) | No | Controls which embedding provider to use                                                              |
 | `PORT`               | Port for the API server (default: 8001)                      | No | If you host API and frontend on the same machine, make sure change port of `SERVER_BASE_URL` accordingly |
 | `SERVER_BASE_URL`    | Base URL for the API server (default: http://localhost:8001) | No |
 | `DEEPWIKI_AUTH_MODE` | Set to `true` or `1` to enable authorization mode. | No | Defaults to `false`. If enabled, `DEEPWIKI_AUTH_CODE` is required. |
@@ -430,6 +566,7 @@ docker-compose up
 **API Key Requirements:**
 - If using `DEEPWIKI_EMBEDDER_TYPE=openai` (default): `OPENAI_API_KEY` is required
 - If using `DEEPWIKI_EMBEDDER_TYPE=google`: `GOOGLE_API_KEY` is required  
+- If using `DEEPWIKI_EMBEDDER_TYPE=zhipuai`: `ZHIPUAI_API_KEY` is required
 - If using `DEEPWIKI_EMBEDDER_TYPE=ollama`: No API key required (local processing)
 - If using `DEEPWIKI_EMBEDDER_TYPE=bedrock`: AWS credentials (or role-based credentials) are required
 
@@ -585,6 +722,56 @@ OpenRouter is particularly useful if you want to:
 - Access models that might be restricted in your region
 - Compare performance across different model providers
 - Optimize for cost vs. performance based on your needs
+
+## 🇨🇳 ZhipuAI Integration
+
+DeepWiki now supports [ZhipuAI](https://open.bigmodel.cn/) as a model provider, offering powerful Chinese language AI models:
+
+- **Chinese Language Excellence**: Optimized for Chinese language understanding and generation
+- **Competitive Performance**: High-quality models with excellent performance on Chinese tasks
+- **Multiple Model Options**: Access to GLM series models including GLM-4 Flash, Plus, and Air
+- **Simple Configuration**: Just add your ZhipuAI API key to get started
+
+### How to Use ZhipuAI with DeepWiki
+
+1. **Get an API Key**: Sign up at [ZhipuAI Open Platform](https://open.bigmodel.cn/) and get your API key
+2. **Add to Environment**: Add `ZHIPUAI_API_KEY=your_key` to your `.env` file
+3. **Enable in UI**: Select ZhipuAI as your model provider in the configuration
+4. **Select Model**: Choose from models like GLM-4 Flash, GLM-4 Plus, or GLM-4 Air
+
+### Supported ZhipuAI Models
+
+- **glm-4-flash** (default): Fast and efficient for most tasks
+- **glm-4-plus**: Enhanced capabilities for complex reasoning
+- **glm-4-air**: Lightweight model for quick responses
+
+### Concurrency Control
+
+ZhipuAI API has rate limits on concurrent requests. To avoid hitting these limits, DeepWiki's ZhipuAI client includes built-in concurrency control:
+
+- **Default Concurrency**: Maximum 2 concurrent requests
+- **Automatic Rate Limiting**: Requests are queued when the limit is reached
+- **Environment Variable Configuration**: Set `ZHIPUAI_MAX_CONCURRENT` to adjust the limit
+
+To configure custom concurrency limits, use the `ZHIPUAI_MAX_CONCURRENT` environment variable:
+
+```bash
+# In your .env file
+ZHIPUAI_MAX_CONCURRENT=2  # Default value
+ZHIPUAI_MAX_CONCURRENT=5  # Higher value for premium API plans
+```
+
+**Tips to avoid rate limit errors:**
+- Start with the default (2 concurrent requests)
+- Monitor your API usage in the ZhipuAI console
+- Consider upgrading your API plan for higher limits
+- Use streaming responses for better user experience during rate-limited periods
+
+ZhipuAI is particularly useful if you want to:
+- Work with Chinese language repositories and documentation
+- Leverage models optimized for Asian languages
+- Access cost-effective alternatives for Chinese language processing
+- Use models with strong Chinese cultural understanding
 
 ## 🤖 Ask & DeepResearch Features
 
